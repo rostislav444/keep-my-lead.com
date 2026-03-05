@@ -33,15 +33,20 @@ class InstagramWebhookView(APIView):
             page_id = entry.get('id')
             print(f'[WEBHOOK] entry.id={page_id}, keys={list(entry.keys())}', flush=True)
 
-            # Direct Messages
+            # Direct Messages (Messenger Platform format)
             for messaging in entry.get('messaging', []):
                 print(f'[WEBHOOK] messaging={messaging}', flush=True)
                 self._handle_dm(page_id, messaging)
 
-            # Comments
+            # Changes format (Instagram Business API)
             for change in entry.get('changes', []):
-                if change.get('field') == 'comments':
-                    self._handle_comment(page_id, change.get('value', {}))
+                field = change.get('field')
+                value = change.get('value', {})
+                print(f'[WEBHOOK] change field={field}, value={value}', flush=True)
+                if field == 'messages':
+                    self._handle_dm(page_id, value)
+                elif field == 'comments':
+                    self._handle_comment(page_id, value)
 
         return Response('OK')
 
