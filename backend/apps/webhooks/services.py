@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 def process_incoming_message(page_id, sender_id, text, message_id='', source='dm', post_id=''):
     """Process an incoming message from Instagram (DM or comment)."""
 
-    # Find the Instagram account by page_id
+    # Find the Instagram account — entry.id from webhook is the instagram_user_id
     try:
         ig_account = InstagramAccount.objects.select_related('tenant').get(
-            page_id=page_id, is_active=True
+            instagram_user_id=page_id, is_active=True
         )
     except InstagramAccount.DoesNotExist:
-        logger.warning('No active Instagram account for page_id=%s', page_id)
+        logger.warning('No active Instagram account for ig_user_id=%s', page_id)
         return
 
     tenant = ig_account.tenant
