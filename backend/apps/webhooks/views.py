@@ -47,8 +47,11 @@ class InstagramWebhookView(APIView):
 
     def _handle_dm(self, page_id, messaging):
         sender_id = messaging.get('sender', {}).get('id')
+        recipient_id = messaging.get('recipient', {}).get('id')
         message = messaging.get('message', {})
         text = message.get('text', '')
+
+        print(f'[WEBHOOK DM] sender={sender_id}, recipient={recipient_id}, text={text}, keys={list(messaging.keys())}', flush=True)
 
         if not text or not sender_id:
             return
@@ -57,9 +60,12 @@ class InstagramWebhookView(APIView):
         if message.get('is_echo'):
             return
 
+        # Use recipient_id (our account) to find the Instagram account
+        account_id = recipient_id or page_id
+
         from apps.webhooks.services import process_incoming_message
         process_incoming_message(
-            page_id=page_id,
+            page_id=account_id,
             sender_id=sender_id,
             text=text,
             message_id=message.get('mid', ''),
