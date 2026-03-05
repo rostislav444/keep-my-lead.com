@@ -1,0 +1,10 @@
+.env
+.env.prod
+*.pyc
+__pycache__/
+db.sqlite3
+postgres_data/
+.venv/
+node_modules/
+.next/
+nginx/ssl/

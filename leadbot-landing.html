@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeadBot — Твои лиды больше не пропадают</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent: #FF3D00;
+      --accent2: #FF9500;
+      --dark: #0A0A0A;
+      --dark2: #111111;
+      --dark3: #1A1A1A;
+      --text: #F0EDE8;
+      --muted: #888;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Onest', sans-serif;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .font-display {
+      font-family: 'Unbounded', sans-serif;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* Animated gradient blob */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: blobMove 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes blobMove {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -30px) scale(1.1); }
+    }
+
+    /* Hero number ticker */
+    .ticker {
+      display: inline-block;
+      animation: tickUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes tickUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Fade in up */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.35s; }
+    .delay-4 { animation-delay: 0.5s; }
+    .delay-5 { animation-delay: 0.65s; }
+
+    /* Marquee */
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 20s linear infinite;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* CTA button */
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 1rem 2.5rem;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 60px rgba(255,61,0,0.4);
+    }
+
+    .btn-primary:hover::before { opacity: 1; }
+
+    /* Card */
+    .card {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .card:hover {
+      border-color: rgba(255,61,0,0.3);
+      transform: translateY(-4px);
+    }
+
+    /* Step number */
+    .step-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 4rem;
+      font-weight: 900;
+      color: rgba(255,61,0,0.12);
+      line-height: 1;
+      transition: color 0.3s;
+    }
+
+    .step-item:hover .step-num {
+      color: rgba(255,61,0,0.4);
+    }
+
+    /* Accent line */
+    .accent-line {
+      width: 40px;
+      height: 3px;
+      background: var(--accent);
+    }
+
+    /* Diagonal section */
+    .diagonal-top {
+      clip-path: polygon(0 4%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    /* Pricing card highlight */
+    .pricing-highlight {
+      background: linear-gradient(135deg, #1a0800, #1a0800);
+      border: 1px solid rgba(255,61,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-highlight::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    /* Stat card */
+    .stat-big {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #FF3D00, #FF9500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Nav */
+    nav {
+      backdrop-filter: blur(20px);
+      background: rgba(10,10,10,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* Chat demo */
+    .chat-bubble-left {
+      background: var(--dark3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0 16px 16px 16px;
+      max-width: 85%;
+      padding: 12px 16px;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .chat-bubble-right {
+      background: linear-gradient(135deg, #FF3D00, #FF6B00);
+      border-radius: 16px 0 16px 16px;
+      max-width: 85%;
+      padding: 12px 16px;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: white;
+      margin-left: auto;
+    }
+
+    .chat-time {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Typing dots */
+    .typing span {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--muted);
+      border-radius: 50%;
+      animation: typingDot 1.2s ease-in-out infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    /* Pulse dot */
+    .pulse-dot {
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      position: relative;
+    }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: rgba(34,197,94,0.3);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.8); opacity: 0; }
+    }
+
+    /* Scroll indicator */
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, rgba(255,61,0,0.8), transparent);
+      margin: 0 auto;
+      animation: scrollDown 2s ease-in-out infinite;
+    }
+    @keyframes scrollDown {
+      0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+      50% { opacity: 1; transform: scaleY(1); }
+      100% { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* Section heading underline */
+    .heading-underline {
+      position: relative;
+      display: inline-block;
+    }
+    .heading-underline::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -8px;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    /* FAQ accordion */
+    details summary { cursor: pointer; list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] .faq-icon { transform: rotate(45deg); }
+    .faq-icon { transition: transform 0.3s; }
+
+    /* Logo mark */
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
+          <path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" opacity="0.8"/>
+          <rect x="6" y="6" width="4" height="4" fill="white"/>
+        </svg>
+      </div>
+      <span style="font-family:'Unbounded',sans-serif; font-size:0.95rem; font-weight:700;">LeadBot</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm" style="color:var(--muted);">
+      <a href="#how" class="hover:text-white transition-colors">Как работает</a>
+      <a href="#pricing" class="hover:text-white transition-colors">Цены</a>
+      <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+    </div>
+    <button class="btn-primary text-xs py-3 px-5">Начать бесплатно</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex flex-col justify-center pt-20 overflow-hidden">
+
+  <!-- Background blobs -->
+  <div class="blob" style="width:600px;height:600px;background:#FF3D00;top:-100px;right:-200px;animation-duration:10s;"></div>
+  <div class="blob" style="width:400px;height:400px;background:#FF9500;bottom:100px;left:-100px;animation-duration:7s;animation-delay:2s;"></div>
+
+  <!-- Marquee ticker top -->
+  <div class="absolute top-20 left-0 right-0 overflow-hidden opacity-10 py-2" style="border-top:1px solid rgba(255,61,0,0.3);border-bottom:1px solid rgba(255,61,0,0.3);">
+    <div class="marquee-track" style="font-family:'Unbounded',sans-serif;font-size:0.6rem;letter-spacing:0.2em;color:var(--accent);">
+      <span class="px-8">ЛИДЫ ИЗ INSTAGRAM</span>
+      <span class="px-8">•</span>
+      <span class="px-8">АВТООТВЕТЫ В DM</span>
+      <span class="px-8">•</span>
+      <span class="px-8">CLAUDE AI</span>
+      <span class="px-8">•</span>
+      <span class="px-8">ГОРЯЧИЕ ЛИДЫ МЕНЕДЖЕРУ</span>
+      <span class="px-8">•</span>
+      <span class="px-8">РАБОТАЕТ 24/7</span>
+      <span class="px-8">•</span>
+      <span class="px-8">ЛИДЫ ИЗ INSTAGRAM</span>
+      <span class="px-8">•</span>
+      <span class="px-8">АВТООТВЕТЫ В DM</span>
+      <span class="px-8">•</span>
+      <span class="px-8">CLAUDE AI</span>
+      <span class="px-8">•</span>
+      <span class="px-8">ГОРЯЧИЕ ЛИДЫ МЕНЕДЖЕРУ</span>
+      <span class="px-8">•</span>
+      <span class="px-8">РАБОТАЕТ 24/7</span>
+      <span class="px-8">•</span>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10 mt-16">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: Copy -->
+      <div>
+        <div class="fade-up delay-1 flex items-center gap-3 mb-8">
+          <div class="pulse-dot"></div>
+          <span class="text-xs tracking-widest uppercase" style="color:var(--muted);">Instagram AI-автоответчик</span>
+        </div>
+
+        <h1 class="fade-up delay-2 font-display leading-none mb-6" style="font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.05;">
+          Твои лиды<br/>
+          <span style="background:linear-gradient(135deg,#FF3D00,#FF9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">больше не<br/>пропадают</span>
+        </h1>
+
+        <p class="fade-up delay-3 mb-8 text-lg" style="color:var(--muted);max-width:440px;line-height:1.7;">
+          Пока ты спишь — бот отвечает. Квалифицирует. Прогревает.
+          И передаёт менеджеру <strong style="color:var(--text);">уже готового к покупке</strong> клиента.
+        </p>
+
+        <div class="fade-up delay-4 flex flex-col sm:flex-row gap-4 mb-10">
+          <button class="btn-primary">Подключить Instagram →</button>
+          <button class="text-sm flex items-center gap-2 hover:text-white transition-colors" style="color:var(--muted);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/>
+            </svg>
+            Смотреть демо
+          </button>
+        </div>
+
+        <div class="fade-up delay-5 flex items-center gap-6">
+          <div class="flex -space-x-2">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-red-500 border-2 border-black flex items-center justify-center text-xs font-bold">А</div>
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500 border-2 border-black flex items-center justify-center text-xs font-bold">К</div>
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border-2 border-black flex items-center justify-center text-xs font-bold">М</div>
+            <div class="w-9 h-9 rounded-full border-2 border-black flex items-center justify-center text-xs" style="background:var(--dark3);color:var(--muted);">+47</div>
+          </div>
+          <p class="text-sm" style="color:var(--muted);">уже подключили свой Instagram</p>
+        </div>
+      </div>
+
+      <!-- Right: Chat demo -->
+      <div class="fade-up delay-3 relative">
+        <div class="card rounded-2xl overflow-hidden" style="background:var(--dark2);">
+
+          <!-- Phone header -->
+          <div class="flex items-center gap-3 px-4 py-3 border-b" style="border-color:rgba(255,255,255,0.06);">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center text-sm font-bold">M</div>
+            <div>
+              <p class="text-sm font-medium">Maria_beauty_school</p>
+              <div class="flex items-center gap-1.5">
+                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                <p class="text-xs" style="color:var(--muted);">LeadBot активен</p>
+              </div>
+            </div>
+            <div class="ml-auto flex gap-1.5">
+              <div class="w-3 h-3 rounded-full bg-red-500 opacity-70"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500 opacity-70"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500 opacity-70"></div>
+            </div>
+          </div>
+
+          <!-- Chat messages -->
+          <div class="p-4 space-y-4" style="min-height:320px;">
+
+            <!-- User comment trigger -->
+            <div class="text-center">
+              <span class="text-xs px-3 py-1 rounded-full" style="background:rgba(255,61,0,0.1);color:var(--accent);">
+                💬 Комментарий под постом
+              </span>
+            </div>
+
+            <div>
+              <div class="chat-bubble-left">
+                <strong style="color:var(--accent);">@nastya_k:</strong> Хочу на курс! Сколько стоит? 🔥
+              </div>
+              <p class="chat-time pl-2">10:23</p>
+            </div>
+
+            <div class="flex justify-end">
+              <div>
+                <div class="chat-bubble-right">
+                  Настя, привет! 👋 Я помощник школы Beauty Expert. Вижу вас интересует наш курс по перманентному макияжу — отличный выбор!
+                </div>
+                <p class="chat-time text-right pr-2">10:23 · AI</p>
+              </div>
+            </div>
+
+            <div>
+              <div class="chat-bubble-left">Да, очень интересует! А что входит?</div>
+              <p class="chat-time pl-2">10:24</p>
+            </div>
+
+            <div class="flex justify-end">
+              <div>
+                <div class="chat-bubble-right">
+                  Курс включает 3 месяца практики, живые модели и сертификат международного образца. 17 лет опыта школы — это уже 2400+ выпускников. Есть рассрочка 0%. Как вас зовут и на какой номер вам перезвонить?
+                </div>
+                <p class="chat-time text-right pr-2">10:24 · AI</p>
+              </div>
+            </div>
+
+            <div>
+              <div class="chat-bubble-left">Настя, +38 050 123 45 67</div>
+              <p class="chat-time pl-2">10:25</p>
+            </div>
+
+            <!-- Hot lead notification -->
+            <div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);">
+              <span class="text-lg">🔥</span>
+              <div>
+                <p class="text-xs font-medium" style="color:#22c55e;">Горячий лид передан менеджеру</p>
+                <p class="text-xs mt-0.5" style="color:var(--muted);">Настя · +38 050 123 45 67 · Курс перманентного макияжа</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Floating stat -->
+        <div class="absolute -right-6 top-8 card rounded-xl px-4 py-3 hidden lg:block" style="background:var(--dark3);">
+          <p class="text-xs mb-1" style="color:var(--muted);">Время ответа</p>
+          <p class="font-display text-xl font-bold" style="color:#22c55e;">2 сек</p>
+          <p class="text-xs" style="color:var(--muted);">vs 4 часа у менеджера</p>
+        </div>
+
+        <!-- Floating stat 2 -->
+        <div class="absolute -left-6 bottom-8 card rounded-xl px-4 py-3 hidden lg:block" style="background:var(--dark3);">
+          <p class="text-xs mb-1" style="color:var(--muted);">Конверсия сегодня</p>
+          <p class="font-display text-xl font-bold" style="color:var(--accent);">68%</p>
+          <p class="text-xs" style="color:var(--muted);">комментариев → лиды</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="flex flex-col items-center gap-3 mt-20 opacity-40">
+      <span class="text-xs tracking-widest uppercase" style="color:var(--muted);">Скролл</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section style="background:var(--dark2);border-top:1px solid rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.04);">
+  <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div class="text-center">
+      <p class="stat-big">60%</p>
+      <p class="text-sm mt-2" style="color:var(--muted);">лидов теряется<br/>без быстрого ответа</p>
+    </div>
+    <div class="text-center">
+      <p class="stat-big">2с</p>
+      <p class="text-sm mt-2" style="color:var(--muted);">среднее время<br/>ответа бота</p>
+    </div>
+    <div class="text-center">
+      <p class="stat-big">24/7</p>
+      <p class="text-sm mt-2" style="color:var(--muted);">работает без<br/>выходных</p>
+    </div>
+    <div class="text-center">
+      <p class="stat-big">3х</p>
+      <p class="text-sm mt-2" style="color:var(--muted);">рост конверсии<br/>в среднем</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="py-32 max-w-6xl mx-auto px-6">
+  <div class="text-center mb-20">
+    <div class="accent-line mx-auto mb-6"></div>
+    <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Как это работает</h2>
+    <p class="text-lg max-w-xl mx-auto" style="color:var(--muted);">Подключаешь Instagram, настраиваешь каталог — и бот начинает работать. Без кода, без технарей.</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+    <div class="step-item card rounded-2xl p-6 relative overflow-hidden group">
+      <div class="step-num absolute -top-2 -right-2">01</div>
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 relative z-10" style="background:rgba(255,61,0,0.1);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/>
+        </svg>
+      </div>
+      <h3 class="font-display text-base font-bold mb-2">Подключи Instagram</h3>
+      <p class="text-sm leading-relaxed" style="color:var(--muted);">OAuth в один клик. Никаких API-ключей, паролей и технических танцев.</p>
+    </div>
+
+    <div class="step-item card rounded-2xl p-6 relative overflow-hidden group">
+      <div class="step-num absolute -top-2 -right-2">02</div>
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 relative z-10" style="background:rgba(255,61,0,0.1);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h3 class="font-display text-base font-bold mb-2">Добавь продукты</h3>
+      <p class="text-sm leading-relaxed" style="color:var(--muted);">Описания, цены, ценности, ответы на возражения. Бот знает всё о твоём бизнесе.</p>
+    </div>
+
+    <div class="step-item card rounded-2xl p-6 relative overflow-hidden group">
+      <div class="step-num absolute -top-2 -right-2">03</div>
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 relative z-10" style="background:rgba(255,61,0,0.1);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+      </div>
+      <h3 class="font-display text-base font-bold mb-2">Бот продаёт</h3>
+      <p class="text-sm leading-relaxed" style="color:var(--muted);">Отвечает на комментарии, ведёт диалог в DM, работает с возражениями.</p>
+    </div>
+
+    <div class="step-item card rounded-2xl p-6 relative overflow-hidden group">
+      <div class="step-num absolute -top-2 -right-2">04</div>
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6 relative z-10" style="background:rgba(255,61,0,0.1);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 01.1 2.86 2 2 0 012.1.68h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.13a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+        </svg>
+      </div>
+      <h3 class="font-display text-base font-bold mb-2">Лид — менеджеру</h3>
+      <p class="text-sm leading-relaxed" style="color:var(--muted);">Имя + телефон + интерес приходят в Telegram. Менеджер звонит горячему клиенту.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="background:var(--dark2);border-top:1px solid rgba(255,255,255,0.04);" class="py-32">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="mb-20">
+      <div class="accent-line mb-6"></div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Не просто чат-бот.<br/><span style="color:var(--accent);">Твой лучший продавец.</span></h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="card rounded-2xl p-8 md:col-span-2">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center" style="background:rgba(255,61,0,0.15);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-display text-lg font-bold mb-2">Глубокий каталог продуктов</h3>
+            <p class="text-sm leading-relaxed" style="color:var(--muted);">Бот знает не только цену. Он знает ценности продукта, типичные возражения, целевую аудиторию, процесс покупки и что клиент получит в итоге. Разговор строится как у лучшего менеджера по продажам.</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-xl p-3" style="background:var(--dark3);">
+            <p class="text-xs mb-1" style="color:var(--muted);">Ценности продукта</p>
+            <p class="text-sm">17 лет опыта · сертификат · 2400+ выпускников</p>
+          </div>
+          <div class="rounded-xl p-3" style="background:var(--dark3);">
+            <p class="text-xs mb-1" style="color:var(--muted);">Ответ на "дорого"</p>
+            <p class="text-sm">Есть рассрочка 0% на 6 месяцев. Первый платёж — через месяц.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-8">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:rgba(255,61,0,0.15);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <h3 class="font-display text-lg font-bold mb-3">Мультитенантность</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Каждый клиент — изолированный аккаунт со своим Instagram, каталогом и настройками бота. Один LeadBot — для сотен бизнесов.</p>
+      </div>
+
+      <div class="card rounded-2xl p-8">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:rgba(255,61,0,0.15);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <h3 class="font-display text-lg font-bold mb-3">Воронка продаж</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Захват → квалификация → презентация → сбор контакта. Бот ведёт клиента по шагам, не просто болтает.</p>
+      </div>
+
+      <div class="card rounded-2xl p-8">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:rgba(255,61,0,0.15);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+          </svg>
+        </div>
+        <h3 class="font-display text-lg font-bold mb-3">Уведомления в Telegram</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Горячий лид — сразу в Telegram менеджеру. Имя, телефон, интерес и история диалога.</p>
+      </div>
+
+      <div class="card rounded-2xl p-8">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:rgba(255,61,0,0.15);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3D00" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <h3 class="font-display text-lg font-bold mb-3">Ручной перехват</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted);">Менеджер может в любой момент подключиться к диалогу одной кнопкой. Бот отступает.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="py-32 max-w-6xl mx-auto px-6">
+  <div class="text-center mb-20">
+    <div class="accent-line mx-auto mb-6"></div>
+    <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">Простые цены</h2>
+    <p class="text-lg" style="color:var(--muted);">Первые 14 дней — бесплатно. Без карты.</p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+
+    <!-- Starter -->
+    <div class="card rounded-2xl p-8">
+      <p class="font-display text-xs font-bold tracking-widest uppercase mb-6" style="color:var(--muted);">Starter</p>
+      <div class="flex items-end gap-2 mb-2">
+        <span class="font-display text-5xl font-black">$29</span>
+        <span class="text-sm mb-2" style="color:var(--muted);">/мес</span>
+      </div>
+      <p class="text-sm mb-8" style="color:var(--muted);">до 500 диалогов · 1 аккаунт</p>
+      <div class="space-y-3 mb-8">
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Instagram DM + комментарии
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Каталог до 10 продуктов
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Telegram уведомления
+        </div>
+        <div class="flex items-center gap-3 text-sm" style="color:var(--muted);">
+          <span>—</span> Dashboard аналитика
+        </div>
+      </div>
+      <button class="w-full py-3 rounded-xl text-sm font-medium transition-colors border" style="border-color:rgba(255,255,255,0.1);color:var(--text);" onmouseover="this.style.borderColor='rgba(255,61,0,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        Начать бесплатно
+      </button>
+    </div>
+
+    <!-- Pro — highlighted -->
+    <div class="pricing-highlight rounded-2xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <p class="font-display text-xs font-bold tracking-widest uppercase" style="color:var(--accent);">Pro</p>
+        <span class="text-xs px-2 py-1 rounded-full font-medium" style="background:rgba(255,61,0,0.15);color:var(--accent);">Популярный</span>
+      </div>
+      <div class="flex items-end gap-2 mb-2">
+        <span class="font-display text-5xl font-black">$79</span>
+        <span class="text-sm mb-2" style="color:var(--muted);">/мес</span>
+      </div>
+      <p class="text-sm mb-8" style="color:var(--muted);">до 3000 диалогов · 3 аккаунта</p>
+      <div class="space-y-3 mb-8">
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Всё из Starter
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Неограниченный каталог
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Dashboard + аналитика
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Ручной перехват диалога
+        </div>
+      </div>
+      <button class="btn-primary w-full text-center">Попробовать 14 дней →</button>
+    </div>
+
+    <!-- Agency -->
+    <div class="card rounded-2xl p-8">
+      <p class="font-display text-xs font-bold tracking-widest uppercase mb-6" style="color:var(--muted);">Agency</p>
+      <div class="flex items-end gap-2 mb-2">
+        <span class="font-display text-5xl font-black">$199</span>
+        <span class="text-sm mb-2" style="color:var(--muted);">/мес</span>
+      </div>
+      <p class="text-sm mb-8" style="color:var(--muted);">Безлимит · Неограничено аккаунтов</p>
+      <div class="space-y-3 mb-8">
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Всё из Pro
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> White-label
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> API доступ
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span style="color:var(--accent);">✓</span> Приоритетная поддержка
+        </div>
+      </div>
+      <button class="w-full py-3 rounded-xl text-sm font-medium transition-colors border" style="border-color:rgba(255,255,255,0.1);color:var(--text);" onmouseover="this.style.borderColor='rgba(255,61,0,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        Связаться с нами
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="background:var(--dark2);border-top:1px solid rgba(255,255,255,0.04);" class="py-32">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="accent-line mx-auto mb-6"></div>
+      <h2 class="font-display text-4xl font-bold">Что говорят клиенты</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="card rounded-2xl p-8">
+        <div class="flex gap-1 mb-4">
+          <span style="color:#FF9500;">★★★★★</span>
+        </div>
+        <p class="text-sm leading-relaxed mb-6" style="color:var(--muted);">"Раньше теряла по 20-30 лидов в неделю. Менеджер просто не успевал. Теперь LeadBot отвечает мгновенно и я получаю уже готовых клиентов на звонок."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center font-bold text-sm">М</div>
+          <div>
+            <p class="text-sm font-medium">Марина Орлова</p>
+            <p class="text-xs" style="color:var(--muted);">Школа косметологии, Київ</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-8">
+        <div class="flex gap-1 mb-4">
+          <span style="color:#FF9500;">★★★★★</span>
+        </div>
+        <p class="text-sm leading-relaxed mb-6" style="color:var(--muted);">"Настроил за один вечер. Бот знает все мои продукты, отвечает на возражения лучше некоторых менеджеров. ROI отбился за первую неделю."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center font-bold text-sm">А</div>
+          <div>
+            <p class="text-sm font-medium">Алексей Диченко</p>
+            <p class="text-xs" style="color:var(--muted);">Фитнес-тренер, Харків</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-2xl p-8">
+        <div class="flex gap-1 mb-4">
+          <span style="color:#FF9500;">★★★★★</span>
+        </div>
+        <p class="text-sm leading-relaxed mb-6" style="color:var(--muted);">"Используем для 5 аккаунтов агентства. Каждый клиент получает своего бота с индивидуальным каталогом. Это просто другой уровень работы."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center font-bold text-sm">К</div>
+          <div>
+            <p class="text-sm font-medium">Катерина Мельник</p>
+            <p class="text-xs" style="color:var(--muted);">Digital-агентство, Львів</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-32 max-w-3xl mx-auto px-6">
+  <div class="text-center mb-16">
+    <div class="accent-line mx-auto mb-6"></div>
+    <h2 class="font-display text-4xl font-bold">Вопросы</h2>
+  </div>
+
+  <div class="space-y-3">
+
+    <details class="card rounded-2xl overflow-hidden group">
+      <summary class="flex items-center justify-between p-6 cursor-pointer">
+        <span class="font-medium">Нужен ли у меня Instagram Business аккаунт?</span>
+        <span class="faq-icon text-xl" style="color:var(--accent);">+</span>
+      </summary>
+      <div class="px-6 pb-6 text-sm leading-relaxed" style="color:var(--muted);">
+        Да, нужен Instagram Business или Creator аккаунт — это требование Meta API. Перевести личный аккаунт в Business можно бесплатно прямо в настройках Instagram за 2 минуты.
+      </div>
+    </details>
+
+    <details class="card rounded-2xl overflow-hidden group">
+      <summary class="flex items-center justify-between p-6 cursor-pointer">
+        <span class="font-medium">Бот может написать глупость клиенту?</span>
+        <span class="faq-icon text-xl" style="color:var(--accent);">+</span>
+      </summary>
+      <div class="px-6 pb-6 text-sm leading-relaxed" style="color:var(--muted);">
+        Бот отвечает строго в рамках каталога который вы заполнили. Если вопрос выходит за его знания — он честно говорит что соединит с менеджером. Менеджер всегда может перехватить диалог одной кнопкой.
+      </div>
+    </details>
+
+    <details class="card rounded-2xl overflow-hidden group">
+      <summary class="flex items-center justify-between p-6 cursor-pointer">
+        <span class="font-medium">Сколько времени занимает настройка?</span>
+        <span class="faq-icon text-xl" style="color:var(--accent);">+</span>
+      </summary>
+      <div class="px-6 pb-6 text-sm leading-relaxed" style="color:var(--muted);">
+        Подключить Instagram — 5 минут. Заполнить каталог продуктов — 20-30 минут. После этого бот уже работает. Никаких технических знаний не требуется.
+      </div>
+    </details>
+
+    <details class="card rounded-2xl overflow-hidden group">
+      <summary class="flex items-center justify-between p-6 cursor-pointer">
+        <span class="font-medium">Могу ли я подключить несколько Instagram аккаунтов?</span>
+        <span class="faq-icon text-xl" style="color:var(--accent);">+</span>
+      </summary>
+      <div class="px-6 pb-6 text-sm leading-relaxed" style="color:var(--muted);">
+        На тарифе Pro — до 3 аккаунтов, на Agency — без ограничений. Каждый аккаунт имеет свой отдельный каталог и настройки бота.
+      </div>
+    </details>
+
+    <details class="card rounded-2xl overflow-hidden group">
+      <summary class="flex items-center justify-between p-6 cursor-pointer">
+        <span class="font-medium">Что если клиент отказывается давать телефон?</span>
+        <span class="faq-icon text-xl" style="color:var(--accent);">+</span>
+      </summary>
+      <div class="px-6 pb-6 text-sm leading-relaxed" style="color:var(--muted);">
+        Бот не давит и не спамит. Он продолжает диалог, отвечает на вопросы и мягко возвращается к получению контакта. Диалог остаётся в системе — менеджер видит его и может написать вручную.
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="relative overflow-hidden py-32" style="background:var(--dark2);border-top:1px solid rgba(255,255,255,0.04);">
+  <div class="blob" style="width:500px;height:500px;background:#FF3D00;top:-200px;right:-100px;opacity:0.1;"></div>
+  <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
+    <p class="font-display text-xs tracking-widest uppercase mb-6" style="color:var(--accent);">Начни прямо сейчас</p>
+    <h2 class="font-display text-4xl md:text-6xl font-black mb-6 leading-tight">
+      Перестань терять<br/>лиды сегодня
+    </h2>
+    <p class="text-lg mb-10 max-w-xl mx-auto" style="color:var(--muted);">
+      14 дней бесплатно. Без карты. Отменить можно в один клик.
+      Первый лид — уже сегодня вечером.
+    </p>
+    <button class="btn-primary text-base py-5 px-10">Подключить Instagram бесплатно →</button>
+    <p class="text-xs mt-6" style="color:var(--muted);">Настройка занимает 10 минут · Работает 24/7 · Поддержка в Telegram</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-12 px-6" style="border-top:1px solid rgba(255,255,255,0.04);">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-3">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
+          <path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" opacity="0.8"/>
+          <rect x="6" y="6" width="4" height="4" fill="white"/>
+        </svg>
+      </div>
+      <span style="font-family:'Unbounded',sans-serif;font-size:0.95rem;font-weight:700;">LeadBot</span>
+    </div>
+    <p class="text-sm" style="color:var(--muted);">© 2026 LeadBot · Все права защищены</p>
+    <div class="flex items-center gap-6 text-sm" style="color:var(--muted);">
+      <a href="#" class="hover:text-white transition-colors">Политика конфиденциальности</a>
+      <a href="#" class="hover:text-white transition-colors">Условия использования</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

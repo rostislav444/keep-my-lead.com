@@ -1,0 +1,104 @@
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+import type { Category, PaginatedResponse } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, Save } from "lucide-react";
+import Link from "next/link";
+
+export default function NewItemPage() {
+  const router = useRouter();
+  const qc = useQueryClient();
+  const [name, setName] = useState("");
+  const [context, setContext] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => api.get<PaginatedResponse<Category>>("/catalog/categories"),
+  });
+
+  const create = useMutation({
+    mutationFn: (data: { name: string; context: string; category: number | null }) =>
+      api.post<{ id: number }>("/catalog/items", data),
+    onSuccess: (item) => {
+      qc.invalidateQueries({ queryKey: ["items"] });
+      router.push(`/panel/catalog/${item.id}`);
+    },
+  });
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center gap-3">
+        <Link href="/panel/catalog">
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <h1 className="text-2xl font-bold text-zinc-900">New product</h1>
+      </div>
+
+      <Card>
+        <CardContent>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              create.mutate({
+                name,
+                context,
+                category: categoryId ? Number(categoryId) : null,
+              });
+            }}
+            className="space-y-4"
+          >
+            <div>
+              <label className="mb-1 block text-sm font-medium text-zinc-600">Name</label>
+              <Input
+                placeholder="Product or service name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-zinc-600">Category</label>
+              <Select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+                <option value="">No category</option>
+                {(categories?.results ?? []).map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-zinc-600">Bot context</label>
+              <Textarea
+                placeholder="Describe your product/service: prices, tariffs, FAQ, objections — everything the bot needs to sell it"
+                value={context}
+                onChange={(e) => setContext(e.target.value)}
+                rows={15}
+                required
+                className="font-mono text-sm"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button type="submit" disabled={create.isPending}>
+                <Save className="mr-1 h-4 w-4" />
+                {create.isPending ? "Creating..." : "Create"}
+              </Button>
+              <Link href="/panel/catalog">
+                <Button type="button" variant="outline">Cancel</Button>
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
