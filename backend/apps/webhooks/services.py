@@ -1,4 +1,5 @@
 import logging
+from django.db.models import Q
 from apps.accounts.models import InstagramAccount
 from apps.dialogs.models import Dialog, Message
 from apps.bot.engine import handle_bot_response
@@ -9,13 +10,16 @@ logger = logging.getLogger(__name__)
 def process_incoming_message(page_id, sender_id, text, message_id='', source='dm', post_id=''):
     """Process an incoming message from Instagram (DM or comment)."""
 
-    # Find the Instagram account — entry.id from webhook is the instagram_user_id
+    # entry.id can be IGBA ID (page_id) or scoped user ID (instagram_user_id)
     try:
-        ig_account = InstagramAccount.objects.select_related('tenant').get(
-            instagram_user_id=page_id, is_active=True
-        )
+        ig_account = InstagramAccount.objects.select_related('tenant').filter(
+            Q(page_id=page_id) | Q(instagram_user_id=page_id),
+            is_active=True,
+        ).first()
+        if not ig_account:
+            raise InstagramAccount.DoesNotExist
     except InstagramAccount.DoesNotExist:
-        logger.warning('No active Instagram account for ig_user_id=%s', page_id)
+        logger.warning('No active Instagram account for id=%s', page_id)
         return
 
     tenant = ig_account.tenant
