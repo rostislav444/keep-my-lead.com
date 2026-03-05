@@ -27,13 +27,15 @@ class InstagramWebhookView(APIView):
     def post(self, request):
         """Handle incoming webhook events from Meta."""
         payload = request.data
-        logger.info('Webhook received: %s', payload)
+        print(f'[WEBHOOK] Received: {payload}', flush=True)
 
         for entry in payload.get('entry', []):
             page_id = entry.get('id')
+            print(f'[WEBHOOK] entry.id={page_id}, keys={list(entry.keys())}', flush=True)
 
             # Direct Messages
             for messaging in entry.get('messaging', []):
+                print(f'[WEBHOOK] messaging={messaging}', flush=True)
                 self._handle_dm(page_id, messaging)
 
             # Comments

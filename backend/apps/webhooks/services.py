@@ -11,6 +11,10 @@ def process_incoming_message(page_id, sender_id, text, message_id='', source='dm
     """Process an incoming message from Instagram (DM or comment)."""
 
     # entry.id can be IGBA ID (page_id) or scoped user ID (instagram_user_id)
+    print(f'[WEBHOOK SVC] Looking for account with id={page_id}, sender={sender_id}', flush=True)
+    all_accounts = InstagramAccount.objects.all()
+    for a in all_accounts:
+        print(f'[WEBHOOK SVC] DB account: ig_id={a.instagram_user_id}, page_id={a.page_id}, active={a.is_active}', flush=True)
     try:
         ig_account = InstagramAccount.objects.select_related('tenant').filter(
             Q(page_id=page_id) | Q(instagram_user_id=page_id),
@@ -19,7 +23,7 @@ def process_incoming_message(page_id, sender_id, text, message_id='', source='dm
         if not ig_account:
             raise InstagramAccount.DoesNotExist
     except InstagramAccount.DoesNotExist:
-        logger.warning('No active Instagram account for id=%s', page_id)
+        print(f'[WEBHOOK SVC] No account found for id={page_id}', flush=True)
         return
 
     tenant = ig_account.tenant
