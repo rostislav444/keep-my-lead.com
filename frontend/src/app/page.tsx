@@ -11,276 +11,403 @@ export default function LandingPage() {
     <div className="landing">
       <LandingNav />
 
-      {/* HERO */}
-      <section className="hero-gradient relative pt-32 pb-24 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl fade-up delay-1">
-            <h1 className="heading-xl mb-8">
-              Never lose a lead<br />
-              from social media again
-            </h1>
-            <div className="flex flex-col sm:flex-row gap-6 mb-12">
-              <p className="text-lg text-[#6b7280] max-w-md leading-relaxed">
-                AI-powered assistant that responds to Instagram DMs and comments instantly,
-                qualifies leads, and delivers hot prospects to your team.
+      {/* ============ HERO ============ */}
+      <section className="hero-section relative min-h-screen flex flex-col justify-center pt-20 overflow-hidden">
+
+        {/* Blobs — large morphing lava-lamp shapes drifting right to left */}
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+
+        {/* Marquee */}
+        <div className="absolute top-20 left-0 right-0 overflow-hidden opacity-10 py-2" style={{ borderTop: "1px solid rgba(255,96,55,0.3)", borderBottom: "1px solid rgba(255,96,55,0.3)" }}>
+          <div className="marquee-track" style={{ fontFamily: "'Unbounded',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--accent)" }}>
+            {["INSTAGRAM LEADS", "AUTO-REPLY IN DM", "CLAUDE AI", "HOT LEADS TO MANAGER", "WORKS 24/7", "INSTAGRAM LEADS", "AUTO-REPLY IN DM", "CLAUDE AI", "HOT LEADS TO MANAGER", "WORKS 24/7"].map((t, i) => (
+              <span key={i}><span className="px-8">{t}</span><span className="px-8">&bull;</span></span>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10 mt-16">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+
+            {/* Left: Copy */}
+            <div>
+              <div className="fade-up delay-1 flex items-center gap-3 mb-8">
+                <div className="pulse-dot"></div>
+                <span className="text-xs tracking-widest uppercase" style={{ color: "var(--muted)" }}>Instagram AI Assistant</span>
+              </div>
+
+              <h1 className="fade-up delay-2 font-display leading-none mb-6" style={{ fontSize: "clamp(2.2rem,5vw,3.8rem)", lineHeight: 1.05 }}>
+                Your leads<br />
+                <span style={{ color: "var(--aqua)" }}>never slip<br />away again</span>
+              </h1>
+
+              <p className="fade-up delay-3 mb-8 text-lg" style={{ color: "var(--cream)", maxWidth: 440, lineHeight: 1.7, opacity: 0.8 }}>
+                While you sleep &mdash; the bot responds. Qualifies. Nurtures.
+                And delivers a <strong style={{ color: "var(--snow)" }}>ready-to-buy</strong> customer to your team.
               </p>
-              <div className="flex items-center gap-2 text-sm text-[#6b7280] shrink-0 self-start">
-                <span className="text-amber-500">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-                <span>4.9/5 from 120+ businesses</span>
+
+              <div className="fade-up delay-4 flex flex-col sm:flex-row gap-4 mb-10">
+                <Link href="/panel/register" className="btn-primary">Connect Instagram &rarr;</Link>
+                <a href="#how" className="text-sm flex items-center gap-2 hover:text-white transition-colors" style={{ color: "var(--muted)" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" /><polygon points="10,8 16,12 10,16" />
+                  </svg>
+                  Watch demo
+                </a>
+              </div>
+
+              <div className="fade-up delay-5 flex items-center gap-6">
+                <div className="flex -space-x-2">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-red-500 border-2 border-[#351E1C] flex items-center justify-center text-xs font-bold">A</div>
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#A0C9CB] to-[#6BA3A6] border-2 border-[#351E1C] flex items-center justify-center text-xs font-bold text-[#351E1C]">K</div>
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 border-2 border-[#351E1C] flex items-center justify-center text-xs font-bold">M</div>
+                  <div className="w-9 h-9 rounded-full border-2 border-[#351E1C] flex items-center justify-center text-xs" style={{ background: "var(--dark3)", color: "var(--muted)" }}>+47</div>
+                </div>
+                <p className="text-sm" style={{ color: "var(--muted)" }}>already connected their Instagram</p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/panel/register" className="btn-primary">
-                Start free trial &rarr;
-              </Link>
-              <a href="#how" className="btn-outline">
-                See how it works
-              </a>
+
+            {/* Right: iPhone Pro Max mockup */}
+            <div className="fade-up delay-3 relative flex justify-center">
+              {/* iPhone frame — titanium bezel */}
+              <div className="relative w-full max-w-[320px]">
+                {/* Outer bezel */}
+                <div className="rounded-[3rem] p-[3px]" style={{ background: "linear-gradient(145deg, #8A8A8E, #5C5C60, #8A8A8E)", boxShadow: "0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1) inset" }}>
+                  {/* Inner bezel */}
+                  <div className="rounded-[2.8rem] p-[2px]" style={{ background: "#1A1A1A" }}>
+                    {/* Screen */}
+                    <div className="rounded-[2.6rem] overflow-hidden relative" style={{ background: "#fff" }}>
+
+                      {/* Status bar with Dynamic Island */}
+                      <div className="relative flex items-center justify-between px-7 pt-3 pb-1" style={{ background: "#fff" }}>
+                        <span className="text-[12px] font-semibold text-[#262626]">9:41</span>
+                        {/* Dynamic Island */}
+                        <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[100px] h-[28px] bg-black rounded-full flex items-center justify-end pr-2 gap-1">
+                          <div className="w-[10px] h-[10px] rounded-full" style={{ background: "radial-gradient(circle at 40% 40%, #3A3A4A, #0A0A0A)" }}></div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {/* Signal bars */}
+                          <svg width="16" height="12" viewBox="0 0 16 12" fill="#262626">
+                            <rect x="0" y="9" width="3" height="3" rx="0.5" />
+                            <rect x="4" y="6" width="3" height="6" rx="0.5" />
+                            <rect x="8" y="3" width="3" height="9" rx="0.5" />
+                            <rect x="12" y="0" width="3" height="12" rx="0.5" />
+                          </svg>
+                          {/* WiFi */}
+                          <svg width="14" height="12" viewBox="0 0 24 24" fill="#262626">
+                            <path d="M12 18l-1.5-1.5a2.12 2.12 0 013 0L12 18zM8.5 14.5A5.65 5.65 0 0112 13a5.65 5.65 0 013.5 1.5M5 11a9.39 9.39 0 017-3 9.39 9.39 0 017 3" stroke="#262626" strokeWidth="2" fill="none" strokeLinecap="round" />
+                          </svg>
+                          {/* Battery */}
+                          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+                            <rect x="0" y="0" width="22" height="12" rx="3" stroke="#262626" strokeWidth="1" />
+                            <rect x="2" y="2" width="16" height="8" rx="1.5" fill="#262626" />
+                            <path d="M23 4v4a2 2 0 000-4z" fill="#262626" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* IG DM Header */}
+                      <div className="flex items-center gap-2.5 px-4 py-2" style={{ background: "#fff", borderBottom: "1px solid #EFEFEF" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#262626" strokeWidth="2.5" strokeLinecap="round">
+                          <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                        {/* Profile pic with IG gradient ring */}
+                        <div className="w-8 h-8 rounded-full p-[2px]" style={{ background: "linear-gradient(135deg, #F58529, #DD2A7B, #8134AF, #515BD4)" }}>
+                          <div className="w-full h-full rounded-full bg-white p-[1.5px]">
+                            <div className="w-full h-full rounded-full bg-gradient-to-br from-pink-300 to-rose-400 flex items-center justify-center text-[9px] font-bold text-white">M</div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-[#262626] leading-tight">Maria_beauty</p>
+                          <p className="text-[10px] text-[#8E8E8E]">Active now</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#262626" strokeWidth="1.5">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 01.1 2.86 2 2 0 012.1.68h3a2 2 0 012 1.72 12.05 12.05 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.59a16 16 0 006 6" />
+                          </svg>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#262626" strokeWidth="1.5">
+                            <rect x="2" y="4" width="20" height="16" rx="4" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Chat area */}
+                      <div className="px-3 py-3 space-y-2.5" style={{ background: "#fff", minHeight: 320 }}>
+
+                        {/* Timestamp */}
+                        <p className="text-center text-[10px] text-[#8E8E8E] mb-1.5">Today 10:23 AM</p>
+
+                        {/* Comment trigger badge */}
+                        <div className="text-center mb-0.5">
+                          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#FFF3F0] text-[#FF6037] font-medium">
+                            Replied to your story
+                          </span>
+                        </div>
+
+                        {/* Incoming message — customer */}
+                        <div className="flex items-end gap-1.5">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-[8px] font-bold text-white flex-shrink-0">N</div>
+                          <div className="rounded-[18px] rounded-bl-[4px] px-3 py-2 max-w-[75%]" style={{ background: "#EFEFEF" }}>
+                            <p className="text-[12px] text-[#262626] leading-snug">I want to enroll! How much is the course? 🔥</p>
+                          </div>
+                        </div>
+
+                        {/* Outgoing — bot reply (IG purple gradient) */}
+                        <div className="flex justify-end">
+                          <div className="rounded-[18px] rounded-br-[4px] px-3 py-2 max-w-[75%]" style={{ background: "linear-gradient(135deg, #833AB4, #C13584, #E1306C)" }}>
+                            <p className="text-[12px] text-white leading-snug">Hi! 👋 I&apos;m the assistant for Beauty Expert school. Our permanent makeup course — great choice!</p>
+                          </div>
+                        </div>
+
+                        {/* Incoming */}
+                        <div className="flex items-end gap-1.5">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-[8px] font-bold text-white flex-shrink-0">N</div>
+                          <div className="rounded-[18px] rounded-bl-[4px] px-3 py-2 max-w-[75%]" style={{ background: "#EFEFEF" }}>
+                            <p className="text-[12px] text-[#262626] leading-snug">What&apos;s included? And how much?</p>
+                          </div>
+                        </div>
+
+                        {/* Outgoing — bot */}
+                        <div className="flex justify-end">
+                          <div className="rounded-[18px] rounded-br-[4px] px-3 py-2 max-w-[75%]" style={{ background: "linear-gradient(135deg, #833AB4, #C13584, #E1306C)" }}>
+                            <p className="text-[12px] text-white leading-snug">3 months of practice, live models, international certificate. 0% installment available! What&apos;s your name and phone?</p>
+                          </div>
+                        </div>
+
+                        {/* Incoming — gives contact */}
+                        <div className="flex items-end gap-1.5">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-[8px] font-bold text-white flex-shrink-0">N</div>
+                          <div className="rounded-[18px] rounded-bl-[4px] px-3 py-2 max-w-[75%]" style={{ background: "#EFEFEF" }}>
+                            <p className="text-[12px] text-[#262626] leading-snug">Nastya, +1 555 123 4567</p>
+                          </div>
+                        </div>
+
+                        {/* Seen status */}
+                        <p className="text-right text-[10px] text-[#8E8E8E] pr-1">Seen</p>
+
+                        {/* Hot lead alert */}
+                        <div className="flex items-start gap-2 p-2 rounded-2xl mx-0.5" style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.15)" }}>
+                          <span className="text-sm">🔥</span>
+                          <div>
+                            <p className="text-[10px] font-semibold" style={{ color: "#16a34a" }}>Hot lead sent to manager</p>
+                            <p className="text-[10px] text-[#8E8E8E]">Nastya &middot; +1 555 123 4567</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* IG DM Input bar */}
+                      <div className="flex items-center gap-2 px-3 py-2" style={{ borderTop: "1px solid #EFEFEF", background: "#fff" }}>
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #F58529, #DD2A7B, #8134AF)" }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                            <circle cx="12" cy="12" r="10" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 rounded-full border border-[#DBDBDB] px-3 py-1.5">
+                          <p className="text-[12px] text-[#8E8E8E]">Message...</p>
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#262626" strokeWidth="1.5"><path d="M12 18.5a6.5 6.5 0 006.5-6.5V8a6.5 6.5 0 10-13 0v4a6.5 6.5 0 006.5 6.5zM12 18.5V22" /></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#262626" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8.5" cy="8.5" r="1.5" fill="#262626" /><path d="M21 15l-5-5L5 21" /></svg>
+                      </div>
+
+                      {/* Home indicator */}
+                      <div className="flex justify-center pb-2 pt-1" style={{ background: "#fff" }}>
+                        <div className="w-[120px] h-[4px] rounded-full bg-[#1A1A1A]"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+          </div>
+
+          {/* Scroll indicator */}
+          <div className="flex flex-col items-center gap-3 mt-20 opacity-40">
+            <span className="text-xs tracking-widest uppercase" style={{ color: "var(--muted)" }}>Scroll</span>
+            <div className="scroll-line"></div>
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="py-20 border-y border-[#e5e7eb]">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12">
+      {/* ============ STATS — garnet block ============ */}
+      <section className="stats-section">
+        <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { num: "60%", label: "of leads are lost without a fast response", color: "text-indigo-600" },
-            { num: "2s", label: "average bot response time", color: "text-purple-600" },
-            { num: "24/7", label: "always on, no days off", color: "text-pink-500" },
-            { num: "3x", label: "average conversion increase", color: "text-emerald-600" },
+            { num: "60%", label: "of leads are lost\nwithout a fast response", numColor: "var(--accent)", textColor: "var(--aqua)" },
+            { num: "2s", label: "average bot\nresponse time", numColor: "var(--aqua)", textColor: "var(--accent)" },
+            { num: "24/7", label: "always on,\nno days off", numColor: "var(--accent)", textColor: "var(--aqua)" },
+            { num: "3x", label: "average conversion\nincrease", numColor: "var(--aqua)", textColor: "var(--accent)" },
           ].map((s) => (
-            <div key={s.num}>
-              <p className={`stat-number ${s.color} mb-2`}>{s.num}</p>
-              <p className="text-sm text-[#6b7280] leading-relaxed">{s.label}</p>
+            <div key={s.num} className="text-center">
+              <p className="stat-big" style={{ color: s.numColor }}>{s.num}</p>
+              <p className="text-lg font-bold mt-3 whitespace-pre-line" style={{ color: s.textColor }}>{s.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* STATEMENT */}
-      <section className="py-28 max-w-5xl mx-auto px-6">
-        <p className="text-[clamp(1.5rem,3.5vw,2.8rem)] font-semibold leading-[1.35] tracking-tight">
-          <span className="text-[#6b7280]">&rarr; We help businesses </span>
-          <span className="hl-blue">capture leads</span>
-          <span className="text-[#6b7280]"> from Instagram, </span>
-          <span className="hl-purple">qualify interest</span>
-          <span className="text-[#6b7280]"> through AI conversations, </span>
-          <span className="hl-orange">collect contacts</span>
-          <span className="text-[#6b7280]">, and </span>
-          <span className="hl-green">notify your team</span>
-          <span className="text-[#6b7280]"> instantly. That&apos;s our promise.</span>
-        </p>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section id="how" className="py-28 bg-[#f0f2f8]">
+      {/* ============ HOW IT WORKS ============ */}
+      <section id="how" className="how-section py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <p className="text-xs font-medium tracking-widest uppercase text-[#6b7280] mb-4">How it works</p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-              From comment to client<br />in 4 simple steps
-            </h2>
+          <div className="text-center mb-20">
+            <div className="accent-line mx-auto mb-6"></div>
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4" style={{ color: "var(--dark)" }}>How it works</h2>
+            <p className="text-lg max-w-xl mx-auto" style={{ color: "var(--dark)", opacity: 0.6 }}>Connect Instagram, set up your catalog &mdash; and the bot starts selling. No code, no tech skills.</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              {
-                step: "STEP ONE",
-                title: "Connect Instagram",
-                desc: "One-click OAuth. No API keys, no passwords, no technical setup.",
-                icon: <><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8m-4-4v4" /></>,
-                tag: "Easy!",
-              },
-              {
-                step: "STEP TWO",
-                title: "Build your catalog",
-                desc: "Add products with pricing, value props, and objection handlers.",
-                icon: <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />,
-                tag: "10 min",
-              },
-              {
-                step: "STEP THREE",
-                title: "Bot sells for you",
-                desc: "AI responds to DMs and comments, qualifies leads, collects contacts.",
-                icon: <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />,
-                tag: "24/7",
-              },
-              {
-                step: "STEP FOUR",
-                title: "Get notified",
-                desc: "Hot leads land in Telegram instantly with name, phone, and interest.",
-                icon: <><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></>,
-                tag: "Instant",
-              },
-            ].map((s, i) => (
-              <div key={s.step} className="how-card group">
-                <p className="text-[10px] font-semibold tracking-widest uppercase text-[#6b7280] mb-3">{s.step}</p>
-                <h3 className="text-base font-bold mb-3">{s.title}</h3>
-                <div className="how-card-icon mb-4">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                    {s.icon}
+              { num: "01", title: "Connect Instagram", desc: "One-click OAuth. No API keys, passwords, or technical setup required.", color: "var(--accent)", barClass: "card-bar-orange", iconBg: "rgba(255,96,55,0.1)" },
+              { num: "02", title: "Add your products", desc: "Descriptions, prices, value props, objection handlers. The bot knows your business.", color: "var(--cream)", barClass: "card-bar-cream", iconBg: "rgba(236,236,220,0.15)" },
+              { num: "03", title: "Bot sells for you", desc: "Responds to comments, chats in DMs, handles objections, and collects contacts.", color: "var(--accent)", barClass: "card-bar-orange", iconBg: "rgba(255,96,55,0.1)" },
+              { num: "04", title: "Lead to manager", desc: "Name + phone + interest land in Telegram. Manager calls a hot customer.", color: "var(--cream)", barClass: "card-bar-cream", iconBg: "rgba(236,236,220,0.15)" },
+            ].map((s) => (
+              <div key={s.num} className={`step-item card card-bar ${s.barClass} rounded-2xl p-6 relative overflow-hidden group`}>
+                <div className="step-num absolute -top-2 -right-2" style={{ color: `color-mix(in srgb, ${s.color} 12%, transparent)` }}>{s.num}</div>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-6 relative z-10" style={{ background: s.iconBg }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={s.color === "var(--cream)" ? "#ECECDC" : "#FF6037"} strokeWidth="2">
+                    {s.num === "01" && <><rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8m-4-4v4" /></>}
+                    {s.num === "02" && <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />}
+                    {s.num === "03" && <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />}
+                    {s.num === "04" && <><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></>}
                   </svg>
                 </div>
-                {i < 3 && (
-                  <div className="hidden lg:flex absolute right-[-18px] top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-[#1a1a1a] items-center justify-center text-white text-xs">
-                    &rarr;
-                  </div>
-                )}
-                <p className="text-sm text-[#6b7280] leading-relaxed mb-4">{s.desc}</p>
-                <span className="inline-block text-xs font-medium px-3 py-1 rounded-full bg-white/80 border border-[#e5e7eb] text-[#6b7280]">
-                  {s.tag}
-                </span>
+                <h3 className="font-display text-base font-bold mb-2" style={{ color: "var(--snow)" }}>{s.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--cream)", opacity: 0.8 }}>{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section id="features" className="py-28">
+      {/* ============ FEATURES ============ */}
+      <section className="features-section py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-20 max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+          <div className="mb-20">
+            <div className="accent-line mb-6"></div>
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4" style={{ color: "var(--dark)" }}>
               Not just a chatbot.<br />
-              <span className="text-indigo-600">Your smartest salesperson.</span>
+              <span style={{ color: "var(--accent)" }}>Your smartest salesperson.</span>
             </h2>
-            <p className="text-lg text-[#6b7280] leading-relaxed">
-              Every feature is designed to convert more leads without adding work for your team.
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5">
-            <div className="feature-card md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2">
+          <div className="grid md:grid-cols-3 gap-6">
+
+            {/* Big card — deep product knowledge */}
+            <div className="card card-bar card-bar-orange rounded-2xl p-8 md:col-span-2">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center" style={{ background: "rgba(255,96,55,0.1)" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6037" strokeWidth="2">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold">Deep Product Knowledge</h3>
-              </div>
-              <p className="text-sm text-[#6b7280] leading-relaxed mb-6">
-                The bot knows your prices, value props, target audience, objection handlers, and buying process. Conversations feel like talking to your best sales rep.
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl p-4 bg-[#f8fafc] border border-[#f0f0f0]">
-                  <p className="text-xs text-[#6b7280] mb-1">Value proposition</p>
-                  <p className="text-sm font-medium">17 years experience &middot; 2400+ graduates &middot; certified</p>
+                <div>
+                  <h3 className="font-display text-lg font-bold mb-2">Deep Product Knowledge</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>The bot knows value props, objections, target audience, and buying process. Conversations feel like talking to your best sales rep.</p>
                 </div>
-                <div className="rounded-xl p-4 bg-[#f8fafc] border border-[#f0f0f0]">
-                  <p className="text-xs text-[#6b7280] mb-1">Objection: &ldquo;too expensive&rdquo;</p>
-                  <p className="text-sm font-medium">0% installment plan, 6 months. First payment in 30 days.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl p-3" style={{ background: "var(--dark)", color: "var(--snow)" }}>
+                  <p className="text-[11px] mb-1" style={{ color: "var(--aqua)" }}>Value proposition</p>
+                  <p className="text-sm">17 years experience &middot; certified &middot; 2400+ graduates</p>
+                </div>
+                <div className="rounded-xl p-3" style={{ background: "var(--dark)", color: "var(--snow)" }}>
+                  <p className="text-[11px] mb-1" style={{ color: "var(--accent)" }}>Objection: &ldquo;too expensive&rdquo;</p>
+                  <p className="text-sm">0% installment, 6 months. First payment in 30 days.</p>
                 </div>
               </div>
             </div>
 
             {[
-              {
-                icon: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>,
-                title: "Multi-tenant",
-                desc: "Each client gets an isolated account with their own Instagram, catalog, and bot settings.",
-                bg: "bg-purple-50",
-                stroke: "#7c3aed",
-              },
-              {
-                icon: <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />,
-                title: "Sales Funnel",
-                desc: "Capture, qualify, present, collect contact. The bot guides customers step by step.",
-                bg: "bg-pink-50",
-                stroke: "#c026d3",
-              },
-              {
-                icon: <><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" /></>,
-                title: "Telegram Alerts",
-                desc: "Hot leads go straight to your managers. Name, phone, interest, and chat history.",
-                bg: "bg-emerald-50",
-                stroke: "#059669",
-              },
-              {
-                icon: <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></>,
-                title: "Human Takeover",
-                desc: "Managers can jump into any conversation with one click. The bot steps aside.",
-                bg: "bg-amber-50",
-                stroke: "#d97706",
-              },
+              { icon: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>, title: "Multi-tenant", desc: "Each client gets an isolated account with their own Instagram, catalog, and bot settings.", stroke: "#A0C9CB", bg: "rgba(160,201,203,0.15)", bar: "card-bar-aqua" },
+              { icon: <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />, title: "Sales Funnel", desc: "Capture, qualify, present, collect contact. The bot guides customers step by step.", stroke: "#FF6037", bg: "rgba(255,96,55,0.15)", bar: "card-bar-orange" },
+              { icon: <><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></>, title: "Telegram Alerts", desc: "Hot leads go straight to your managers. Name, phone, interest, and full chat history.", stroke: "#A0C9CB", bg: "rgba(160,201,203,0.15)", bar: "card-bar-aqua" },
+              { icon: <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></>, title: "Human Takeover", desc: "Managers can jump into any conversation with one click. The bot steps aside.", stroke: "#FF6037", bg: "rgba(255,96,55,0.15)", bar: "card-bar-orange" },
             ].map((f) => (
-              <div key={f.title} className="feature-card">
-                <div className={`w-10 h-10 rounded-xl ${f.bg} flex items-center justify-center mb-4`}>
+              <div key={f.title} className={`card card-bar ${f.bar} rounded-2xl p-8`}>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ background: f.bg }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={f.stroke} strokeWidth="2">
                     {f.icon}
                   </svg>
                 </div>
-                <h3 className="font-bold mb-2">{f.title}</h3>
-                <p className="text-sm text-[#6b7280] leading-relaxed">{f.desc}</p>
+                <h3 className="font-display text-lg font-bold mb-3">{f.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PRICING */}
-      <section id="pricing" className="py-28 bg-[#f8fafc]">
+      {/* ============ PRICING ============ */}
+      <section id="pricing" className="pricing-section py-32">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Simple pricing</h2>
-            <p className="text-lg text-[#6b7280]">14-day free trial. No credit card required.</p>
+            <div className="accent-line mx-auto mb-6"></div>
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Simple pricing</h2>
+            <p className="text-lg" style={{ color: "var(--muted)" }}>14-day free trial. No credit card required.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="pricing-card p-8">
-              <p className="text-xs font-bold tracking-widest uppercase text-[#6b7280] mb-6">Starter</p>
-              <div className="flex items-end gap-1 mb-2">
-                <span className="text-5xl font-extrabold">$29</span>
-                <span className="text-sm text-[#6b7280] mb-2">/mo</span>
+
+            {/* Starter */}
+            <div className="card rounded-2xl p-8">
+              <p className="font-display text-xs font-bold tracking-widest uppercase mb-6" style={{ color: "var(--muted)" }}>Starter</p>
+              <div className="flex items-end gap-2 mb-2">
+                <span className="font-display text-5xl font-black">$29</span>
+                <span className="text-sm mb-2" style={{ color: "var(--muted)" }}>/mo</span>
               </div>
-              <p className="text-sm text-[#6b7280] mb-8">500 conversations &middot; 1 account</p>
+              <p className="text-sm mb-8" style={{ color: "var(--muted)" }}>500 conversations &middot; 1 account</p>
               <div className="space-y-3 mb-8 text-sm">
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Instagram DM + comments</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Up to 10 products</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Telegram notifications</div>
-                <div className="flex items-center gap-3 text-[#6b7280]"><span>&mdash;</span> Analytics dashboard</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--aqua)" }}>&#10003;</span> Instagram DM + comments</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--aqua)" }}>&#10003;</span> Up to 10 products</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--aqua)" }}>&#10003;</span> Telegram notifications</div>
+                <div className="flex items-center gap-3" style={{ color: "var(--muted)" }}><span>&mdash;</span> Analytics dashboard</div>
               </div>
-              <Link href="/panel/register" className="btn-outline w-full text-center block">
+              <Link href="/panel/register" className="block w-full py-3 rounded-xl text-sm font-medium text-center transition-colors border no-underline" style={{ borderColor: "rgba(255,255,255,0.1)", color: "var(--snow)" }}>
                 Start free
               </Link>
             </div>
 
-            <div className="pricing-highlight p-8">
+            {/* Pro — highlighted */}
+            <div className="pricing-highlight rounded-2xl p-8">
               <div className="flex items-center justify-between mb-6">
-                <p className="text-xs font-bold tracking-widest uppercase text-indigo-600">Pro</p>
-                <span className="text-xs px-3 py-1 rounded-full font-medium bg-indigo-50 text-indigo-600">Popular</span>
+                <p className="font-display text-xs font-bold tracking-widest uppercase" style={{ color: "var(--accent)" }}>Pro</p>
+                <span className="text-xs px-2 py-1 rounded-full font-medium" style={{ background: "rgba(255,96,55,0.15)", color: "var(--accent)" }}>Popular</span>
               </div>
-              <div className="flex items-end gap-1 mb-2">
-                <span className="text-5xl font-extrabold">$79</span>
-                <span className="text-sm text-[#6b7280] mb-2">/mo</span>
+              <div className="flex items-end gap-2 mb-2">
+                <span className="font-display text-5xl font-black">$79</span>
+                <span className="text-sm mb-2" style={{ color: "var(--muted)" }}>/mo</span>
               </div>
-              <p className="text-sm text-[#6b7280] mb-8">3,000 conversations &middot; 3 accounts</p>
+              <p className="text-sm mb-8" style={{ color: "var(--muted)" }}>3,000 conversations &middot; 3 accounts</p>
               <div className="space-y-3 mb-8 text-sm">
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Everything in Starter</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Unlimited catalog</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Analytics dashboard</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Human takeover</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--accent)" }}>&#10003;</span> Everything in Starter</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--accent)" }}>&#10003;</span> Unlimited catalog</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--accent)" }}>&#10003;</span> Analytics dashboard</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--accent)" }}>&#10003;</span> Human takeover</div>
               </div>
               <Link href="/panel/register" className="btn-primary w-full text-center block">
-                Start 14-day trial &rarr;
+                Try 14 days free &rarr;
               </Link>
             </div>
 
-            <div className="pricing-card p-8">
-              <p className="text-xs font-bold tracking-widest uppercase text-[#6b7280] mb-6">Agency</p>
-              <div className="flex items-end gap-1 mb-2">
-                <span className="text-5xl font-extrabold">$199</span>
-                <span className="text-sm text-[#6b7280] mb-2">/mo</span>
+            {/* Agency */}
+            <div className="card rounded-2xl p-8">
+              <p className="font-display text-xs font-bold tracking-widest uppercase mb-6" style={{ color: "var(--muted)" }}>Agency</p>
+              <div className="flex items-end gap-2 mb-2">
+                <span className="font-display text-5xl font-black">$199</span>
+                <span className="text-sm mb-2" style={{ color: "var(--muted)" }}>/mo</span>
               </div>
-              <p className="text-sm text-[#6b7280] mb-8">Unlimited &middot; Unlimited accounts</p>
+              <p className="text-sm mb-8" style={{ color: "var(--muted)" }}>Unlimited &middot; Unlimited accounts</p>
               <div className="space-y-3 mb-8 text-sm">
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Everything in Pro</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> White-label</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> API access</div>
-                <div className="flex items-center gap-3"><span className="text-indigo-500">&#10003;</span> Priority support</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--aqua)" }}>&#10003;</span> Everything in Pro</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--aqua)" }}>&#10003;</span> White-label</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--aqua)" }}>&#10003;</span> API access</div>
+                <div className="flex items-center gap-3"><span style={{ color: "var(--aqua)" }}>&#10003;</span> Priority support</div>
               </div>
-              <Link href="/panel/register" className="btn-outline w-full text-center block">
+              <Link href="/panel/register" className="block w-full py-3 rounded-xl text-sm font-medium text-center transition-colors border no-underline" style={{ borderColor: "rgba(255,255,255,0.1)", color: "var(--snow)" }}>
                 Contact us
               </Link>
             </div>
@@ -288,28 +415,32 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-28">
+      {/* ============ TESTIMONIALS — cream light block ============ */}
+      <section className="testimonials-section py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold tracking-tight mb-16">What our clients say</h2>
+          <div className="text-center mb-16">
+            <div className="accent-line mx-auto mb-6"></div>
+            <h2 className="font-display text-4xl font-bold">What our clients say</h2>
+          </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { quote: "Used to lose 20-30 leads weekly. Manager just couldn't keep up. Now the bot responds instantly and I get ready-to-buy clients on the phone.", name: "Marina O.", role: "Beauty school, Kyiv", bg: "bg-indigo-50" },
-              { quote: "Set it up in one evening. The bot knows all my products, handles objections better than some of my managers. ROI paid off in the first week.", name: "Alex D.", role: "Fitness coach, Kharkiv", bg: "bg-purple-50" },
-              { quote: "Using it for 5 agency accounts. Each client gets their own bot with individual catalog. This is just a different level of work.", name: "Kate M.", role: "Digital agency, Lviv", bg: "bg-pink-50" },
+              { quote: "Used to lose 20-30 leads weekly. Manager just couldn't keep up. Now the bot responds instantly and I get ready-to-buy clients on the phone.", name: "Marina O.", role: "Beauty school, Kyiv", accent: "#FF6037" },
+              { quote: "Set it up in one evening. The bot knows all my products, handles objections better than some of my managers. ROI paid off in the first week.", name: "Alex D.", role: "Fitness coach, Kharkiv", accent: "#A0C9CB" },
+              { quote: "Using it for 5 agency accounts. Each client gets their own bot with individual catalog. This is just a different level of work.", name: "Kate M.", role: "Digital agency, Lviv", accent: "#FF6037" },
             ].map((t) => (
-              <div key={t.name} className="feature-card">
+              <div key={t.name} className="card rounded-2xl p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full" style={{ background: t.accent }}></div>
                 <div className="flex gap-1 mb-4">
-                  <span className="text-amber-400">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span style={{ color: "#FF6037" }}>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
                 </div>
-                <p className="text-sm text-[#6b7280] leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: "var(--snow)", opacity: 0.7 }}>&ldquo;{t.quote}&rdquo;</p>
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full ${t.bg} flex items-center justify-center font-bold text-sm text-[#1a1a1a]`}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white" style={{ background: t.accent }}>
                     {t.name[0]}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">{t.name}</p>
-                    <p className="text-xs text-[#6b7280]">{t.role}</p>
+                    <p className="text-sm font-medium">{t.name}</p>
+                    <p className="text-xs" style={{ color: "var(--muted)" }}>{t.role}</p>
                   </div>
                 </div>
               </div>
@@ -318,10 +449,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="py-28 bg-[#f8fafc]">
+      {/* ============ FAQ ============ */}
+      <section id="faq" className="faq-section py-32">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-4xl font-bold tracking-tight mb-16">Questions</h2>
+          <div className="text-center mb-16">
+            <div className="accent-line mx-auto mb-6"></div>
+            <h2 className="font-display text-4xl font-bold" style={{ color: "var(--dark)" }}>Questions</h2>
+          </div>
 
           <div className="space-y-3">
             {[
@@ -331,123 +465,57 @@ export default function LandingPage() {
               { q: "Can I connect multiple Instagram accounts?", a: "Pro plan supports up to 3 accounts, Agency plan is unlimited. Each account has its own catalog and bot settings." },
               { q: "What if a customer refuses to give their phone number?", a: "The bot doesn't push or spam. It continues the conversation, answers questions, and gently returns to collecting contact info. The dialog stays in the system — managers can follow up manually." },
             ].map((faq) => (
-              <details key={faq.q} className="feature-card overflow-hidden group">
+              <details key={faq.q} className="card rounded-2xl overflow-hidden group">
                 <summary className="flex items-center justify-between p-6 cursor-pointer">
-                  <span className="font-medium pr-4">{faq.q}</span>
-                  <span className="faq-icon text-xl text-indigo-500 shrink-0">+</span>
+                  <span className="font-medium pr-4" style={{ color: "var(--dark)" }}>{faq.q}</span>
+                  <span className="faq-icon text-xl" style={{ color: "var(--accent)" }}>+</span>
                 </summary>
-                <div className="px-6 pb-6 text-sm leading-relaxed text-[#6b7280]">{faq.a}</div>
+                <div className="px-6 pb-6 text-sm leading-relaxed" style={{ color: "var(--dark)", opacity: 0.6 }}>{faq.a}</div>
               </details>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA + FOOTER */}
-      <section className="bg-[#f0f2f5] pt-28 pb-12 px-6">
-        {/* CTA Card */}
-        <div className="max-w-6xl mx-auto mb-16">
-          <div className="cta-card rounded-[28px] p-12 md:p-20 text-center text-white relative overflow-hidden">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-5 leading-tight relative z-10">
-              Ready to keep<br />every lead?
-            </h2>
-            <p className="text-base md:text-lg text-white/70 mb-10 max-w-lg mx-auto leading-relaxed relative z-10">
-              14 days free. No credit card. Cancel anytime.
-              Your first lead could arrive tonight.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-              <Link href="/panel/register" className="bg-white text-[#1a1a1a] font-semibold text-sm py-3.5 px-8 rounded-xl hover:bg-gray-100 transition-all inline-block text-decoration-none">
-                Start free trial &rarr;
-              </Link>
-              <a href="#how" className="text-sm text-white/70 hover:text-white transition-colors">
-                See how it works
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Card */}
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white rounded-[28px] p-10 md:p-14">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
-              {/* Logo + Subscribe */}
-              <div className="md:col-span-4">
-                <div className="flex items-center gap-2.5 mb-5">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="white">
-                      <path d="M4 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2H4zM10 2a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V4a2 2 0 00-2-2h-2zM4 8a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H4zM10 8a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z" />
-                    </svg>
-                  </div>
-                  <span className="text-[0.95rem] font-bold text-[#1a1a1a]">Keep My Lead</span>
-                </div>
-                <p className="text-sm text-[#6b7280] leading-relaxed mb-5">
-                  AI-powered lead capture for Instagram.<br />Never miss a customer again.
-                </p>
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    placeholder="Your email"
-                    className="flex-1 text-sm px-4 py-2.5 rounded-xl border border-[#e5e7eb] bg-[#f8fafc] outline-none focus:border-indigo-300 transition-colors"
-                  />
-                  <button className="text-sm font-medium px-5 py-2.5 rounded-xl bg-[#1a1a1a] text-white hover:bg-black transition-colors">
-                    Subscribe
-                  </button>
-                </div>
-              </div>
-
-              {/* Link columns */}
-              <div className="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
-                <div>
-                  <p className="text-xs font-semibold tracking-widest uppercase text-[#6b7280] mb-4">Product</p>
-                  <div className="space-y-3 text-sm">
-                    <a href="#features" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Features</a>
-                    <a href="#pricing" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Pricing</a>
-                    <a href="#how" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">How it works</a>
-                    <a href="#faq" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">FAQ</a>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold tracking-widest uppercase text-[#6b7280] mb-4">Company</p>
-                  <div className="space-y-3 text-sm">
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">About</a>
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Blog</a>
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Careers</a>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold tracking-widest uppercase text-[#6b7280] mb-4">Support</p>
-                  <div className="space-y-3 text-sm">
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Help center</a>
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Contact</a>
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Telegram</a>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold tracking-widest uppercase text-[#6b7280] mb-4">Legal</p>
-                  <div className="space-y-3 text-sm">
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Privacy</a>
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Terms</a>
-                    <a href="#" className="block text-[#6b7280] hover:text-[#1a1a1a] transition-colors">Cookies</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Copyright */}
-            <div className="pt-8 border-t border-[#f0f0f0] flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-xs text-[#9ca3af]">&copy; 2026 Keep My Lead. All rights reserved.</p>
-              <div className="flex items-center gap-5">
-                <a href="#" className="text-[#9ca3af] hover:text-[#6b7280] transition-colors" aria-label="Instagram">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
-                </a>
-                <a href="#" className="text-[#9ca3af] hover:text-[#6b7280] transition-colors" aria-label="Telegram">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6.54l-2.16 10.2c-.16.72-.58.9-1.17.56l-3.24-2.39-1.56 1.5c-.17.17-.32.32-.65.32l.23-3.28 5.95-5.38c.26-.23-.06-.36-.4-.13l-7.35 4.62-3.16-1c-.69-.21-.7-.69.14-.99l12.37-4.76c.57-.21 1.07.14.88.99z" /></svg>
-                </a>
-              </div>
-            </div>
-          </div>
+      {/* ============ CTA — garnet block ============ */}
+      <section className="cta-final relative overflow-hidden py-32">
+        <div className="blob blob-1" style={{ width: 500, height: 500, top: -200, right: -100 }}></div>
+        <div className="blob blob-2" style={{ width: 400, height: 400, bottom: -150, left: -50 }}></div>
+        <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
+          <p className="font-display text-xs tracking-widest uppercase mb-6" style={{ color: "var(--aqua)" }}>Start now</p>
+          <h2 className="font-display text-4xl md:text-6xl font-black mb-6 leading-tight">
+            Stop losing<br />leads today
+          </h2>
+          <p className="text-lg mb-10 max-w-xl mx-auto" style={{ color: "var(--cream)", opacity: 0.7 }}>
+            14 days free. No credit card. Cancel anytime.
+            Your first lead could arrive tonight.
+          </p>
+          <Link href="/panel/register" className="btn-primary text-base py-5 px-10">
+            Connect Instagram free &rarr;
+          </Link>
+          <p className="text-xs mt-6" style={{ color: "var(--muted)" }}>Setup takes 10 minutes &middot; Works 24/7 &middot; Telegram support</p>
         </div>
       </section>
+
+      {/* ============ FOOTER ============ */}
+      <footer className="footer-section py-12 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="logo-mark">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
+                <path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" opacity="0.8" />
+                <rect x="6" y="6" width="4" height="4" fill="white" />
+              </svg>
+            </div>
+            <span style={{ fontFamily: "'Unbounded',sans-serif", fontSize: "0.95rem", fontWeight: 700 }}>Keep My Lead</span>
+          </div>
+          <p className="text-sm" style={{ color: "var(--muted)" }}>&copy; 2026 Keep My Lead &middot; All rights reserved</p>
+          <div className="flex items-center gap-6 text-sm" style={{ color: "var(--muted)" }}>
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
