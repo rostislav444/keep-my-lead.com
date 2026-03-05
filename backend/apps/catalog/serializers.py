@@ -15,8 +15,9 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = [
-            'id', 'category', 'category_name', 'name', 'context',
-            'is_active', 'source_type', 'source_id', 'synced_at',
+            'id', 'category', 'category_name', 'name', 'short_description',
+            'context', 'bot_instructions', 'is_active',
+            'source_type', 'source_id', 'synced_at',
             'created_at', 'updated_at',
         ]
         read_only_fields = ['id', 'source_type', 'source_id', 'synced_at', 'created_at', 'updated_at']

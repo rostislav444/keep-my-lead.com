@@ -25,7 +25,9 @@ export interface Item {
   category: number | null;
   category_name: string | null;
   name: string;
+  short_description: string;
   context: string;
+  bot_instructions: string;
   is_active: boolean;
   source_type: string;
   source_id: string;

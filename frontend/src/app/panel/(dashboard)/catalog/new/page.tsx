@@ -17,7 +17,9 @@ export default function NewItemPage() {
   const router = useRouter();
   const qc = useQueryClient();
   const [name, setName] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
   const [context, setContext] = useState("");
+  const [botInstructions, setBotInstructions] = useState("");
   const [categoryId, setCategoryId] = useState("");
 
   const { data: categories } = useQuery({
@@ -26,8 +28,13 @@ export default function NewItemPage() {
   });
 
   const create = useMutation({
-    mutationFn: (data: { name: string; context: string; category: number | null }) =>
-      api.post<{ id: number }>("/catalog/items", data),
+    mutationFn: (data: {
+      name: string;
+      short_description: string;
+      context: string;
+      bot_instructions: string;
+      category: number | null;
+    }) => api.post<{ id: number }>("/catalog/items", data),
     onSuccess: (item) => {
       qc.invalidateQueries({ queryKey: ["items"] });
       router.push(`/panel/catalog/${item.id}`);
@@ -52,7 +59,9 @@ export default function NewItemPage() {
               e.preventDefault();
               create.mutate({
                 name,
+                short_description: shortDescription,
                 context,
+                bot_instructions: botInstructions,
                 category: categoryId ? Number(categoryId) : null,
               });
             }}
@@ -77,15 +86,36 @@ export default function NewItemPage() {
               </Select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-600">Bot context</label>
+              <label className="mb-1 block text-sm font-medium text-zinc-600">Short description</label>
+              <Input
+                placeholder="1-2 sentences: what is this product/service (bot always sees this)"
+                value={shortDescription}
+                onChange={(e) => setShortDescription(e.target.value)}
+              />
+              <p className="mt-1 text-xs text-zinc-400">Always sent to the bot as part of the catalog overview</p>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-zinc-600">Full description</label>
               <Textarea
-                placeholder="Describe your product/service: prices, tariffs, FAQ, objections — everything the bot needs to sell it"
+                placeholder="Prices, tariffs, FAQ, conditions, details — everything the bot needs to answer questions"
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
-                rows={15}
+                rows={12}
                 required
                 className="font-mono text-sm"
               />
+              <p className="mt-1 text-xs text-zinc-400">Sent to the bot only when a user shows interest in this product</p>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-zinc-600">Bot instructions</label>
+              <Textarea
+                placeholder="What to emphasize, what to avoid, which questions to ask, how to handle objections for this product"
+                value={botInstructions}
+                onChange={(e) => setBotInstructions(e.target.value)}
+                rows={6}
+                className="font-mono text-sm"
+              />
+              <p className="mt-1 text-xs text-zinc-400">Specific instructions for the bot when talking about this product</p>
             </div>
             <div className="flex gap-2">
               <Button type="submit" disabled={create.isPending}>

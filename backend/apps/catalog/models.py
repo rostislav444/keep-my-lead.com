@@ -25,8 +25,16 @@ class Item(models.Model):
         Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='items'
     )
     name = models.CharField(max_length=255)
+    short_description = models.CharField(
+        max_length=500, blank=True,
+        help_text='1-2 sentences for quick catalog overview (always sent to bot)'
+    )
     context = models.TextField(
-        help_text='Full description for the bot: prices, tariffs, FAQ, objections'
+        help_text='Full description: prices, tariffs, FAQ, objections (sent when user shows interest)'
+    )
+    bot_instructions = models.TextField(
+        blank=True,
+        help_text='Instructions for the bot: what to emphasize, avoid, which questions to ask'
     )
     is_active = models.BooleanField(default=True)
 
