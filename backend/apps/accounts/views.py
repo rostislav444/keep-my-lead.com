@@ -18,11 +18,11 @@ from .serializers import InstagramAccountSerializer
 
 logger = logging.getLogger(__name__)
 
-INSTAGRAM_AUTH_URL = 'https://api.instagram.com/oauth/authorize'
+INSTAGRAM_AUTH_URL = 'https://www.instagram.com/oauth/authorize'
 INSTAGRAM_TOKEN_URL = 'https://api.instagram.com/oauth/access_token'
 INSTAGRAM_GRAPH_URL = 'https://graph.instagram.com'
 
-SCOPES = 'instagram_business_basic,instagram_business_manage_messages,instagram_manage_comments'
+SCOPES = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments'
 
 
 def exchange_code_for_token(code, redirect_uri):

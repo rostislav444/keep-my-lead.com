@@ -271,8 +271,8 @@ class OnboardingView(APIView):
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
-INSTAGRAM_AUTH_URL = 'https://api.instagram.com/oauth/authorize'
-IG_SCOPES = 'instagram_business_basic,instagram_business_manage_messages,instagram_manage_comments'
+INSTAGRAM_AUTH_URL = 'https://www.instagram.com/oauth/authorize'
+IG_SCOPES = 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments'
 
 
 class InstagramLoginRedirectView(APIView):
