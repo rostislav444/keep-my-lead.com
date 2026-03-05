@@ -511,8 +511,8 @@ export default function LandingPage() {
           </div>
           <p className="text-sm" style={{ color: "var(--muted)" }}>&copy; 2026 Keep My Lead &middot; All rights reserved</p>
           <div className="flex items-center gap-6 text-sm" style={{ color: "var(--muted)" }}>
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>
         </div>
       </footer>

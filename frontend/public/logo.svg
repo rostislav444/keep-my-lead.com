@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <!-- Bubble (rounded rectangle + centered tail) -->
+  <path
+    fill="#6D28D9"
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M56 36C33.908 36 16 53.908 16 76V152C16 174.092 33.908 192 56 192H109.5L122 205.2C125.9 209.3 132.6 209.3 136.5 205.2L149 192H200C222.092 192 240 174.092 240 152V76C240 53.908 222.092 36 200 36H56Z"
+  />
+
+  <!-- Lightning bolt -->
+  <path
+    fill="#FFFFFF"
+    d="M149.2 62.8c1.6-3.3-2.2-6.3-4.8-3.8L91 122.6c-2 2 .1 5.4 3 5.4h38.2l-13.7 61.2c-.8 3.4 3.8 5.2 5.6 2.2l51.8-86.5c1.4-2.4-.3-5.4-3.1-5.4h-36.3l12.7-36.7Z"
+  />
+</svg>

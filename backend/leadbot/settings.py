@@ -102,6 +102,7 @@ CSRF_TRUSTED_ORIGINS = config(
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_HTTPONLY = False
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # DRF
 REST_FRAMEWORK = {
@@ -118,6 +119,12 @@ REST_FRAMEWORK = {
 # Celery
 CELERY_BROKER_URL = config('REDIS_URL', default='redis://redis:6379/0')
 CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://redis:6379/0')
+CELERY_BEAT_SCHEDULE = {
+    'refresh-instagram-tokens': {
+        'task': 'apps.accounts.tasks.refresh_instagram_tokens',
+        'schedule': 60 * 60 * 24 * 7,  # every 7 days
+    },
+}
 
 # External APIs
 ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')

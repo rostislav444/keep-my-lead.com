@@ -10,4 +10,7 @@ urlpatterns = [
     path('/team/<int:pk>', views.TeamDeleteView.as_view(), name='team-delete'),
     path('/telegram/link', views.TelegramLinkView.as_view(), name='telegram-link'),
     path('/telegram/webhook', views.TelegramWebhookView.as_view(), name='telegram-webhook'),
+    path('/onboarding', views.OnboardingView.as_view(), name='onboarding'),
+    path('/instagram', views.InstagramLoginRedirectView.as_view(), name='instagram-login'),
+    path('/instagram/callback', views.InstagramLoginCallbackView.as_view(), name='instagram-login-callback'),
 ]

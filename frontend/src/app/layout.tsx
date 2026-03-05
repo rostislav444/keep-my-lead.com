@@ -3,8 +3,8 @@ import "./globals.css";
 import { Providers } from "@/lib/providers";
 
 export const metadata: Metadata = {
-  title: "LeadBot",
-  description: "Instagram lead automation platform",
+  title: "Keep My Lead",
+  description: "Never lose a lead again. Automated follow-ups for Instagram DMs.",
 };
 
 export default function RootLayout({
