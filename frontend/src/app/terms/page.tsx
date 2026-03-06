@@ -54,14 +54,8 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-[#F5F5F0] mb-3">6. Subscription and Billing</h2>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>The Service offers a 14-day free trial period</li>
-              <li>After the trial, continued use requires a paid subscription</li>
-              <li>Subscriptions are billed monthly and renew automatically</li>
-              <li>You may cancel your subscription at any time; cancellation takes effect at the end of the current billing period</li>
-              <li>We reserve the right to change pricing with 30 days&apos; notice</li>
-            </ul>
+            <h2 className="text-xl font-semibold text-[#F5F5F0] mb-3">6. Pricing</h2>
+            <p>The Service is currently in early access. Pricing details, including any usage-based fees, will be announced before the Service transitions to a paid model. You will be notified at least 30 days in advance and will not be charged without explicit consent.</p>
           </section>
 
           <section>
