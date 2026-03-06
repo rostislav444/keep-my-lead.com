@@ -1,11 +1,8 @@
-from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
 
-router = DefaultRouter(trailing_slash=False)
+router = DefaultRouter()
 router.register('categories', views.CategoryViewSet, basename='category')
 router.register('items', views.ItemViewSet, basename='item')
 
-urlpatterns = [
-    path('/', include(router.urls)),
-]
+urlpatterns = router.urls

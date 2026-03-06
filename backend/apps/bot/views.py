@@ -1,9 +1,10 @@
-from rest_framework import generics
+from rest_framework.generics import RetrieveUpdateAPIView
+
 from .models import BotConfig
 from .serializers import BotConfigSerializer
 
 
-class BotConfigView(generics.RetrieveUpdateAPIView):
+class BotConfigView(RetrieveUpdateAPIView):
     serializer_class = BotConfigSerializer
 
     def get_object(self):

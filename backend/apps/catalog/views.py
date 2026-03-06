@@ -1,27 +1,17 @@
 from rest_framework import viewsets
+
+from apps.core.mixins import TenantQuerySetMixin
+from .filters import ItemFilter
 from .models import Category, Item
 from .serializers import CategorySerializer, ItemSerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(TenantQuerySetMixin, viewsets.ModelViewSet):
     serializer_class = CategorySerializer
-
-    def get_queryset(self):
-        return Category.objects.filter(tenant=self.request.user.tenant)
-
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user.tenant)
+    queryset = Category.objects.all()
 
 
-class ItemViewSet(viewsets.ModelViewSet):
+class ItemViewSet(TenantQuerySetMixin, viewsets.ModelViewSet):
     serializer_class = ItemSerializer
-
-    def get_queryset(self):
-        qs = Item.objects.filter(tenant=self.request.user.tenant).select_related('category')
-        category = self.request.query_params.get('category')
-        if category:
-            qs = qs.filter(category_id=category)
-        return qs
-
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user.tenant)
+    queryset = Item.objects.select_related('category')
+    filterset_class = ItemFilter

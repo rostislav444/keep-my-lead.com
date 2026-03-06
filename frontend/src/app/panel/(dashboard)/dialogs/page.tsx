@@ -1,21 +1,23 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useRef, useEffect } from "react";
-import { api } from "@/lib/api";
-import type {
-  PaginatedResponse,
-  Dialog,
-  DialogDetail,
-  Lead,
-  Message,
-} from "@/lib/types";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import {
+  useDialogs,
+  useDialog,
+  useLeads,
+  useSendMessage,
+  useHandoff,
+  useReturnToBot,
+} from "@/lib/hooks";
+import type { Dialog, Lead, Message } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
   MessageSquare,
+  MessageCircle,
+  AtSign,
   Send,
   UserCheck,
   Bot,
@@ -24,7 +26,6 @@ import {
   Package,
   Flame,
   Search,
-  Circle,
 } from "lucide-react";
 
 const STATUS_TABS = [
@@ -38,66 +39,42 @@ const STATUS_TABS = [
 ] as const;
 
 export default function DialogsPage() {
-  const qc = useQueryClient();
+  const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(() => {
+    const id = searchParams.get("id");
+    return id ? Number(id) : null;
+  });
   const [text, setText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const params = new URLSearchParams();
-  if (statusFilter) params.set("status", statusFilter);
-  const qs = params.toString() ? `?${params}` : "";
-
-  const { data: dialogsData, isLoading } = useQuery({
-    queryKey: ["dialogs", statusFilter],
-    queryFn: () => api.get<PaginatedResponse<Dialog>>(`/dialogs/${qs}`),
-  });
-
-  const { data: dialog } = useQuery({
-    queryKey: ["dialog", selectedId],
-    queryFn: () => api.get<DialogDetail>(`/dialogs/${selectedId}`),
-    enabled: !!selectedId,
-    refetchInterval: 5000,
-  });
-
-  const { data: leadsData } = useQuery({
-    queryKey: ["leads"],
-    queryFn: () => api.get<PaginatedResponse<Lead>>("/leads"),
-  });
+  const { data: allDialogsData } = useDialogs("");
+  const { data: dialogsData, isLoading } = useDialogs(statusFilter);
+  const { data: dialog } = useDialog(selectedId);
+  const { data: leadsData } = useLeads();
 
   const lead = leadsData?.results.find((l) => l.dialog_id === selectedId);
 
-  const sendMessage = useMutation({
-    mutationFn: (t: string) => api.post(`/dialogs/${selectedId}/send`, { text: t }),
-    onSuccess: () => {
-      setText("");
-      qc.invalidateQueries({ queryKey: ["dialog", selectedId] });
-      qc.invalidateQueries({ queryKey: ["dialogs"] });
-    },
-  });
+  const sendMessage = useSendMessage(selectedId);
+  const handoff = useHandoff(selectedId);
+  const returnToBot = useReturnToBot(selectedId);
 
-  const handoff = useMutation({
-    mutationFn: () => api.post(`/dialogs/${selectedId}/handoff`),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["dialog", selectedId] });
-      qc.invalidateQueries({ queryKey: ["dialogs"] });
-    },
-  });
-
-  const returnToBot = useMutation({
-    mutationFn: () => api.post(`/dialogs/${selectedId}/return-to-bot`),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["dialog", selectedId] });
-      qc.invalidateQueries({ queryKey: ["dialogs"] });
-    },
-  });
+  // Count dialogs per status for tab badges
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    if (allDialogsData?.results) {
+      for (const d of allDialogsData.results) {
+        counts[d.status] = (counts[d.status] || 0) + 1;
+      }
+    }
+    return counts;
+  }, [allDialogsData]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [dialog?.messages]);
 
-  // Auto-select first dialog
   useEffect(() => {
     if (!selectedId && dialogsData?.results.length) {
       setSelectedId(dialogsData.results[0].id);
@@ -111,260 +88,289 @@ export default function DialogsPage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] gap-0 overflow-hidden rounded-2xl border border-zinc-100 bg-white/80 backdrop-blur-sm shadow-sm">
-      {/* Left: Dialog list */}
-      <div className="flex w-[320px] shrink-0 flex-col border-r border-zinc-100">
-        {/* Search */}
-        <div className="p-3 pb-0">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search dialogs..."
-              className="h-9 w-full rounded-xl border border-zinc-100 bg-zinc-50/80 pl-9 pr-3 text-sm placeholder:text-zinc-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all"
-            />
-          </div>
-        </div>
-
-        {/* Status tabs */}
-        <div className="flex gap-1 overflow-x-auto px-3 py-2.5 scrollbar-none">
-          {STATUS_TABS.map((tab) => (
+    <div className="flex h-screen flex-col bg-white">
+      {/* Top: Status filter bar */}
+      <div className="flex items-center gap-1 border-b border-zinc-200 bg-white px-4 py-2 shrink-0">
+        {STATUS_TABS.map((tab) => {
+          const count = tab.value === ""
+            ? allDialogsData?.count ?? 0
+            : statusCounts[tab.value] ?? 0;
+          return (
             <button
               key={tab.value}
               onClick={() => setStatusFilter(tab.value)}
               className={cn(
-                "shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-all cursor-pointer",
                 statusFilter === tab.value
-                  ? "bg-indigo-50 text-indigo-600"
-                  : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+                  ? "bg-[#351E1C] text-white shadow-sm"
+                  : "text-[#9E8E8C] hover:bg-[#351E1C]/5 hover:text-[#351E1C]"
               )}
             >
               {tab.label}
+              <span className={cn(
+                "rounded-md px-1.5 py-px text-[11px] font-semibold tabular-nums",
+                statusFilter === tab.value
+                  ? "bg-white/20 text-white"
+                  : "bg-zinc-100 text-[#9E8E8C]"
+              )}>
+                {count}
+              </span>
             </button>
-          ))}
-        </div>
-
-        {/* Dialog list */}
-        <div className="flex-1 overflow-y-auto">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-500" />
-            </div>
-          ) : !filteredDialogs?.length ? (
-            <div className="flex flex-col items-center justify-center py-16 px-6">
-              <MessageSquare className="mb-2 h-8 w-8 text-zinc-200" />
-              <p className="text-sm text-zinc-400">No dialogs</p>
-            </div>
-          ) : (
-            filteredDialogs.map((d) => (
-              <button
-                key={d.id}
-                onClick={() => setSelectedId(d.id)}
-                className={cn(
-                  "flex w-full items-start gap-3 px-4 py-3 text-left transition-all cursor-pointer border-b border-zinc-50",
-                  selectedId === d.id
-                    ? "bg-indigo-50/60"
-                    : "hover:bg-zinc-50/80"
-                )}
-              >
-                {/* Avatar */}
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 text-sm font-semibold text-white">
-                  {(d.instagram_username || "U").charAt(0).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-semibold text-zinc-900 truncate">
-                      @{d.instagram_username || `user_${d.id}`}
-                    </span>
-                    <span className="shrink-0 text-[11px] text-zinc-400">
-                      {formatTime(d.updated_at)}
-                    </span>
-                  </div>
-                  <div className="mt-0.5 flex items-center gap-1.5">
-                    <StatusDot status={d.status} />
-                    <span className="text-[11px] text-zinc-400 capitalize">{d.status.replace("_", " ")}</span>
-                    {!d.is_bot_active && (
-                      <span className="text-[11px] text-amber-500 font-medium">manual</span>
-                    )}
-                  </div>
-                  {d.last_message && (
-                    <p className="mt-1 truncate text-xs text-zinc-500">
-                      {d.last_message.text}
-                    </p>
-                  )}
-                </div>
-              </button>
-            ))
-          )}
-        </div>
+          );
+        })}
       </div>
 
-      {/* Center: Chat */}
-      {selectedId && dialog ? (
-        <>
-          <div className="flex flex-1 flex-col">
-            {/* Chat header */}
-            <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 text-sm font-semibold text-white">
-                  {(dialog.instagram_username || "U").charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-zinc-900">
-                    @{dialog.instagram_username || dialog.instagram_user_id}
+      {/* Main content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left: Dialog list */}
+        <div className="flex w-[340px] shrink-0 flex-col border-r border-zinc-200">
+          {/* Search */}
+          <div className="border-b border-zinc-100 px-3 py-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#9E8E8C]" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search conversations..."
+                className="h-8 w-full rounded-lg border border-zinc-200 bg-zinc-50 pl-9 pr-3 text-sm text-[#351E1C] placeholder:text-[#9E8E8C] focus:border-[#FF6037] focus:outline-none focus:ring-2 focus:ring-[#FF6037]/20 transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Dialog list */}
+          <div className="flex-1 overflow-y-auto">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#FF6037]/20 border-t-[#FF6037]" />
+              </div>
+            ) : !filteredDialogs?.length ? (
+              <div className="flex flex-col items-center justify-center py-16 px-6">
+                <MessageSquare className="mb-2 h-8 w-8 text-zinc-300" />
+                <p className="text-sm font-medium text-[#9E8E8C]">No conversations</p>
+              </div>
+            ) : (
+              filteredDialogs.map((d) => (
+                <button
+                  key={d.id}
+                  onClick={() => setSelectedId(d.id)}
+                  className={cn(
+                    "flex w-full items-start gap-3 px-4 py-3 text-left transition-all cursor-pointer border-b border-zinc-100",
+                    selectedId === d.id
+                      ? "bg-[#FF6037]/5 border-l-2 border-l-[#FF6037]"
+                      : "hover:bg-zinc-50 border-l-2 border-l-transparent"
+                  )}
+                >
+                  <div className="relative">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#351E1C] to-[#4A2B28] text-sm font-semibold text-white">
+                      {(d.instagram_username || "U").charAt(0).toUpperCase()}
+                    </div>
+                    <StatusDot status={d.status} />
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <StatusBadge status={dialog.status} />
-                    {dialog.source === "comment" && (
-                      <span className="text-zinc-300">from comment</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className={cn(
+                        "text-[13px] font-semibold truncate",
+                        selectedId === d.id ? "text-[#351E1C]" : "text-zinc-900"
+                      )}>
+                        @{d.instagram_username || `user_${d.id}`}
+                      </span>
+                      <span className="shrink-0 text-[11px] font-medium text-[#9E8E8C] tabular-nums">
+                        {formatTime(d.updated_at)}
+                      </span>
+                    </div>
+                    <div className="mt-0.5 flex items-center gap-1.5">
+                      {d.source === "dm" ? (
+                        <MessageCircle className="h-3 w-3 text-[#9E8E8C]" />
+                      ) : (
+                        <AtSign className="h-3 w-3 text-[#9E8E8C]" />
+                      )}
+                      <span className="text-[11px] font-medium text-[#9E8E8C] capitalize">{d.status.replace("_", " ")}</span>
+                      {!d.is_bot_active && (
+                        <span className="rounded bg-amber-100 px-1 py-px text-[10px] font-semibold text-amber-700">MANUAL</span>
+                      )}
+                    </div>
+                    {d.last_message && (
+                      <p className="mt-1 truncate text-xs text-zinc-500 leading-relaxed">
+                        {d.last_message.text}
+                      </p>
                     )}
                   </div>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                {dialog.is_bot_active ? (
-                  <Button size="sm" variant="soft" onClick={() => handoff.mutate()}>
-                    <UserCheck className="mr-1.5 h-3.5 w-3.5" />
-                    Take over
-                  </Button>
-                ) : (
-                  <Button size="sm" variant="outline" onClick={() => returnToBot.mutate()}>
-                    <Bot className="mr-1.5 h-3.5 w-3.5" />
-                    Return to bot
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 bg-zinc-50/30">
-              {dialog.messages.map((msg) => (
-                <ChatBubble key={msg.id} message={msg} />
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            {!dialog.is_bot_active ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (text.trim()) sendMessage.mutate(text.trim());
-                }}
-                className="flex items-center gap-2 border-t border-zinc-100 p-3"
-              >
-                <Input
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Type a message..."
-                  className="flex-1 border-zinc-100 bg-zinc-50/50"
-                />
-                <Button
-                  type="submit"
-                  size="icon"
-                  disabled={sendMessage.isPending || !text.trim()}
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </form>
-            ) : (
-              <div className="flex items-center justify-center border-t border-zinc-100 py-3 text-xs text-zinc-400">
-                <Bot className="mr-1.5 h-3.5 w-3.5" />
-                Bot is handling this conversation
-              </div>
+                </button>
+              ))
             )}
           </div>
+        </div>
 
-          {/* Right: Contact card */}
-          <div className="w-[280px] shrink-0 border-l border-zinc-100 overflow-y-auto">
-            <div className="p-5">
-              {/* Profile */}
-              <div className="flex flex-col items-center pb-5 border-b border-zinc-100">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 text-xl font-bold text-white mb-3">
-                  {(dialog.instagram_username || "U").charAt(0).toUpperCase()}
+        {/* Center: Chat */}
+        {selectedId && dialog ? (
+          <>
+            <div className="flex flex-1 flex-col">
+              {/* Chat header */}
+              <div className="flex items-center justify-between border-b border-zinc-200 bg-white px-5 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#351E1C] to-[#4A2B28] text-sm font-semibold text-white">
+                    {(dialog.instagram_username || "U").charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-[#351E1C]">
+                      @{dialog.instagram_username || dialog.instagram_user_id}
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <StatusBadge status={dialog.status} />
+                      {dialog.source === "comment" && (
+                        <span className="text-[11px] text-[#9E8E8C]">from comment</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-sm font-semibold text-zinc-900">
-                  @{dialog.instagram_username || dialog.instagram_user_id}
-                </div>
-                <div className="mt-1 text-xs text-zinc-400">
-                  Started {new Date(dialog.started_at).toLocaleDateString()}
+                <div className="flex gap-2">
+                  {dialog.is_bot_active ? (
+                    <Button size="sm" variant="soft" onClick={() => handoff.mutate()}>
+                      <UserCheck className="mr-1.5 h-3.5 w-3.5" />
+                      Take over
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline" onClick={() => returnToBot.mutate()}>
+                      <Bot className="mr-1.5 h-3.5 w-3.5" />
+                      Return to bot
+                    </Button>
+                  )}
                 </div>
               </div>
 
-              {/* Lead info */}
-              {lead ? (
-                <div className="mt-4 space-y-4">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                    Lead info
-                  </h4>
-                  <InfoRow icon={User} label="Name" value={lead.name} />
-                  <InfoRow
-                    icon={Phone}
-                    label="Phone"
-                    value={lead.phone}
-                    href={lead.phone ? `tel:${lead.phone}` : undefined}
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 bg-[#F5F4ED]/30">
+                {dialog.messages.map((msg) => (
+                  <ChatBubble key={msg.id} message={msg} />
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input */}
+              {!dialog.is_bot_active ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (text.trim()) sendMessage.mutate(text.trim(), { onSuccess: () => setText("") });
+                  }}
+                  className="flex items-center gap-2 border-t border-zinc-200 bg-white p-3"
+                >
+                  <input
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    placeholder="Type a message..."
+                    className="flex-1 h-10 rounded-lg border border-zinc-200 bg-zinc-50 px-4 text-sm text-[#351E1C] placeholder:text-[#9E8E8C] focus:border-[#FF6037] focus:outline-none focus:ring-2 focus:ring-[#FF6037]/20 transition-all"
                   />
-                  <InfoRow icon={Package} label="Interest" value={lead.interest} />
-                  <InfoRow icon={Package} label="Product" value={lead.product_name} />
-                  <div>
-                    <div className="mb-1 text-[11px] text-zinc-400">Temperature</div>
-                    <Badge
-                      variant={
-                        lead.temperature === "hot"
-                          ? "destructive"
-                          : lead.temperature === "warm"
-                          ? "warning"
-                          : "default"
-                      }
-                    >
-                      <Flame className="mr-1 h-3 w-3" />
-                      {lead.temperature.toUpperCase()}
-                    </Badge>
-                  </div>
-                </div>
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={sendMessage.isPending || !text.trim()}
+                    className="h-10 w-10 shrink-0"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </form>
               ) : (
-                <div className="mt-6 flex flex-col items-center py-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 mb-2">
-                    <User className="h-5 w-5 text-zinc-300" />
-                  </div>
-                  <p className="text-xs text-zinc-400">No lead data yet</p>
-                  <p className="mt-1 text-[11px] text-zinc-300">Bot is collecting info</p>
+                <div className="flex items-center justify-center border-t border-zinc-200 bg-zinc-50 py-3.5 text-xs font-medium text-[#9E8E8C]">
+                  <Bot className="mr-1.5 h-3.5 w-3.5" />
+                  Bot is handling this conversation
                 </div>
               )}
+            </div>
 
-              {/* Dialog meta */}
-              <div className="mt-6 border-t border-zinc-100 pt-4">
-                <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                  Details
-                </h4>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Source</span>
-                    <span className="text-zinc-700 capitalize">{dialog.source}</span>
+            {/* Right: Contact card */}
+            <div className="w-[280px] shrink-0 border-l border-zinc-200 overflow-y-auto bg-white">
+              <div className="p-5">
+                {/* Profile */}
+                <div className="flex flex-col items-center pb-5 border-b border-zinc-200">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#351E1C] to-[#4A2B28] text-xl font-bold text-white mb-3">
+                    {(dialog.instagram_username || "U").charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Messages</span>
-                    <span className="text-zinc-700">{dialog.messages.length}</span>
+                  <div className="text-sm font-bold text-[#351E1C]">
+                    @{dialog.instagram_username || dialog.instagram_user_id}
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-400">Bot active</span>
-                    <span className={dialog.is_bot_active ? "text-emerald-600" : "text-amber-600"}>
-                      {dialog.is_bot_active ? "Yes" : "No"}
-                    </span>
+                  <div className="mt-1 text-xs text-[#9E8E8C]">
+                    Started {new Date(dialog.started_at).toLocaleDateString()}
+                  </div>
+                </div>
+
+                {/* Lead info */}
+                {lead ? (
+                  <div className="mt-4 space-y-4">
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#9E8E8C]">
+                      Lead info
+                    </h4>
+                    <InfoRow icon={User} label="Name" value={lead.name} />
+                    <InfoRow
+                      icon={Phone}
+                      label="Phone"
+                      value={lead.phone}
+                      href={lead.phone ? `tel:${lead.phone}` : undefined}
+                    />
+                    <InfoRow icon={Package} label="Interest" value={lead.interest} />
+                    <InfoRow icon={Package} label="Product" value={lead.product_name} />
+                    <div>
+                      <div className="mb-1 text-[11px] font-medium text-[#9E8E8C]">Temperature</div>
+                      <Badge
+                        variant={
+                          lead.temperature === "hot"
+                            ? "destructive"
+                            : lead.temperature === "warm"
+                            ? "warning"
+                            : "default"
+                        }
+                      >
+                        <Flame className="mr-1 h-3 w-3" />
+                        {lead.temperature.toUpperCase()}
+                      </Badge>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-6 flex flex-col items-center py-6">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#351E1C]/5 mb-2">
+                      <User className="h-5 w-5 text-[#9E8E8C]" />
+                    </div>
+                    <p className="text-xs font-medium text-[#9E8E8C]">No lead data yet</p>
+                    <p className="mt-1 text-[11px] text-zinc-400">Bot is collecting info</p>
+                  </div>
+                )}
+
+                {/* Dialog meta */}
+                <div className="mt-5 border-t border-zinc-200 pt-4">
+                  <h4 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-[#9E8E8C]">
+                    Details
+                  </h4>
+                  <div className="space-y-2.5 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-[#9E8E8C]">Source</span>
+                      <span className="font-medium text-[#351E1C] capitalize">{dialog.source}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#9E8E8C]">Messages</span>
+                      <span className="font-medium text-[#351E1C]">{dialog.messages.length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#9E8E8C]">Bot active</span>
+                      <span className={cn(
+                        "font-semibold",
+                        dialog.is_bot_active ? "text-emerald-600" : "text-amber-600"
+                      )}>
+                        {dialog.is_bot_active ? "Yes" : "No"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </>
+        ) : (
+          <div className="flex flex-1 flex-col items-center justify-center bg-[#F5F4ED]/30">
+            <MessageSquare className="mb-3 h-12 w-12 text-[#9E8E8C]/40" />
+            <p className="text-sm font-medium text-[#9E8E8C]">Select a conversation</p>
           </div>
-        </>
-      ) : (
-        <div className="flex flex-1 flex-col items-center justify-center text-zinc-300">
-          <MessageSquare className="mb-3 h-12 w-12" />
-          <p className="text-sm">Select a dialog to view</p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -379,23 +385,24 @@ function ChatBubble({ message }: { message: Message }) {
     <div className={cn("flex", !isUser && "justify-end")}>
       <div
         className={cn(
-          "max-w-[70%] rounded-2xl px-4 py-2.5 text-sm",
+          "max-w-[70%] rounded-2xl px-3.5 py-2 text-[13px] leading-relaxed",
           isUser
-            ? "bg-white border border-zinc-100 text-zinc-900 shadow-sm rounded-tl-md"
+            ? "bg-white border border-zinc-200 text-[#351E1C] shadow-sm rounded-bl-md"
             : isBot
-            ? "bg-indigo-500 text-white shadow-sm rounded-tr-md"
-            : "bg-emerald-500 text-white shadow-sm rounded-tr-md"
+            ? "bg-[#351E1C] text-[#F5F4ED] shadow-md rounded-br-md"
+            : "bg-[#FF6037] text-white shadow-md rounded-br-md"
         )}
       >
-        <p className="whitespace-pre-wrap leading-relaxed">{message.text}</p>
+        <p className="whitespace-pre-wrap">{message.text}</p>
         <div
           className={cn(
-            "mt-1 flex items-center gap-1.5 text-[10px]",
-            isUser ? "text-zinc-400" : "text-white/60"
+            "mt-1 flex items-center justify-end gap-1 text-[10px] tabular-nums",
+            isUser ? "text-[#9E8E8C]" : isBot ? "text-[#F5F4ED]/50" : "text-white/60"
           )}
         >
-          <span>{isBot ? "Bot" : message.role === "manager" ? "Manager" : ""}</span>
           <span>{new Date(message.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+          {isBot && <Bot className="h-3 w-3" />}
+          {message.role === "manager" && <UserCheck className="h-3 w-3" />}
         </div>
       </div>
     </div>
@@ -417,14 +424,19 @@ function StatusBadge({ status }: { status: Dialog["status"] }) {
 
 function StatusDot({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    new: "text-indigo-400",
-    active: "text-emerald-400",
-    qualified: "text-purple-400",
-    lead: "text-emerald-500",
-    handed_off: "text-amber-400",
-    closed: "text-zinc-300",
+    new: "bg-[#FF6037]",
+    active: "bg-emerald-500",
+    qualified: "bg-purple-500",
+    lead: "bg-emerald-600",
+    handed_off: "bg-amber-500",
+    closed: "bg-[#9E8E8C]",
   };
-  return <Circle className={cn("h-2 w-2 fill-current", colors[status] || "text-zinc-300")} />;
+  return (
+    <span className={cn(
+      "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white",
+      colors[status] || "bg-[#9E8E8C]"
+    )} />
+  );
 }
 
 function InfoRow({
@@ -440,16 +452,16 @@ function InfoRow({
 }) {
   return (
     <div>
-      <div className="mb-0.5 flex items-center gap-1.5 text-[11px] text-zinc-400">
+      <div className="mb-0.5 flex items-center gap-1.5 text-[11px] font-medium text-[#9E8E8C]">
         <Icon className="h-3 w-3" />
         {label}
       </div>
       {href && value ? (
-        <a href={href} className="text-sm font-medium text-indigo-600 hover:underline">
+        <a href={href} className="text-sm font-semibold text-[#FF6037] hover:underline">
           {value}
         </a>
       ) : (
-        <p className="text-sm font-medium text-zinc-800">{value || "—"}</p>
+        <p className="text-sm font-semibold text-[#351E1C]">{value || "—"}</p>
       )}
     </div>
   );

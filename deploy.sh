@@ -66,7 +66,7 @@ echo "[6/7] Running migrations..."
 ssh $SERVER "cd $REMOTE_DIR && \
   docker compose -f docker-compose.prod.yml exec -T backend python manage.py migrate && \
   docker compose -f docker-compose.prod.yml exec -T backend python manage.py collectstatic --noinput && \
-  docker compose -f docker-compose.prod.yml exec -T backend python manage.py initial_data"
+  docker compose -f docker-compose.prod.yml exec -T backend python manage.py seed_demo"
 
 # 7. Set up certbot auto-renewal cron
 echo "[7/7] Setting up SSL auto-renewal..."

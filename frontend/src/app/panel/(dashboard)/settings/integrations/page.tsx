@@ -1,8 +1,13 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { api } from "@/lib/api";
+import {
+  useIntegrations,
+  useAddIntegration,
+  useRemoveIntegration,
+  useSyncIntegration,
+} from "@/lib/hooks";
+import type { CRMConfig } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -10,47 +15,20 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plug, Trash2, RefreshCw, Plus, X } from "lucide-react";
 
-interface CRMConfig {
-  id: number;
-  source_type: string;
-  api_url: string;
-  sync_interval_minutes: number;
-  last_synced_at: string | null;
-  is_active: boolean;
-}
-
 export default function IntegrationsPage() {
-  const qc = useQueryClient();
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ source_type: "moami", api_key: "", api_url: "" });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["integrations"],
-    queryFn: () => api.get<{ results: CRMConfig[] }>("/integrations"),
-  });
-
-  const addIntegration = useMutation({
-    mutationFn: (data: typeof form) => api.post("/integrations", data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["integrations"] });
-      setAdding(false);
-    },
-  });
-
-  const removeIntegration = useMutation({
-    mutationFn: (id: number) => api.delete(`/integrations/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["integrations"] }),
-  });
-
-  const syncNow = useMutation({
-    mutationFn: (id: number) => api.post(`/integrations/${id}/sync`),
-  });
+  const { data, isLoading } = useIntegrations();
+  const addIntegration = useAddIntegration();
+  const removeIntegration = useRemoveIntegration();
+  const syncNow = useSyncIntegration();
 
   const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
 
   return (
-    <div>
+    <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-zinc-900">Integrations</h1>
         <Button onClick={() => setAdding(true)}>
@@ -71,7 +49,7 @@ export default function IntegrationsPage() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                addIntegration.mutate(form);
+                addIntegration.mutate(form, { onSuccess: () => setAdding(false) });
               }}
               className="space-y-3"
             >

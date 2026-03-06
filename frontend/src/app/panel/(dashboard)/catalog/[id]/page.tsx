@@ -1,10 +1,9 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { api } from "@/lib/api";
-import type { Item, Category, PaginatedResponse } from "@/lib/types";
+import { useItem, useCategories, useDeleteItem, useUpdateItem } from "@/lib/hooks";
+import type { Item, Category } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,32 +16,17 @@ import Link from "next/link";
 export default function CatalogDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const qc = useQueryClient();
   const [editing, setEditing] = useState(false);
 
-  const { data: item, isLoading } = useQuery({
-    queryKey: ["item", id],
-    queryFn: () => api.get<Item>(`/catalog/items/${id}`),
-  });
-
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => api.get<PaginatedResponse<Category>>("/catalog/categories"),
-  });
-
-  const deleteItem = useMutation({
-    mutationFn: () => api.delete(`/catalog/items/${id}`),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["items"] });
-      router.push("/panel/catalog");
-    },
-  });
+  const { data: item, isLoading } = useItem(id);
+  const { data: categories } = useCategories();
+  const deleteItem = useDeleteItem();
 
   if (isLoading) return <p className="text-zinc-400">Loading...</p>;
   if (!item) return <p className="text-zinc-400">Product not found</p>;
 
   return (
-    <div>
+    <div className="p-6">
       <div className="mb-6 flex items-center gap-3">
         <Link href="/panel/catalog">
           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -59,11 +43,7 @@ export default function CatalogDetailPage() {
         <EditForm
           item={item}
           categories={categories?.results ?? []}
-          onSaved={() => {
-            setEditing(false);
-            qc.invalidateQueries({ queryKey: ["item", id] });
-            qc.invalidateQueries({ queryKey: ["items"] });
-          }}
+          onSaved={() => setEditing(false)}
           onCancel={() => setEditing(false)}
         />
       ) : (
@@ -71,7 +51,7 @@ export default function CatalogDetailPage() {
           item={item}
           onEdit={() => setEditing(true)}
           onDelete={() => {
-            if (confirm("Delete this product?")) deleteItem.mutate();
+            if (confirm("Delete this product?")) deleteItem.mutate(Number(id), { onSuccess: () => router.push("/panel/catalog") });
           }}
         />
       )}
@@ -169,16 +149,7 @@ function EditForm({
   const [botInstructions, setBotInstructions] = useState(item.bot_instructions);
   const [categoryId, setCategoryId] = useState(item.category?.toString() ?? "");
 
-  const save = useMutation({
-    mutationFn: (data: {
-      name: string;
-      short_description: string;
-      context: string;
-      bot_instructions: string;
-      category: number | null;
-    }) => api.put(`/catalog/items/${item.id}`, data),
-    onSuccess: onSaved,
-  });
+  const save = useUpdateItem(item.id);
 
   return (
     <Card>
@@ -198,7 +169,7 @@ function EditForm({
               context,
               bot_instructions: botInstructions,
               category: categoryId ? Number(categoryId) : null,
-            });
+            }, { onSuccess: onSaved });
           }}
           className="space-y-4"
         >

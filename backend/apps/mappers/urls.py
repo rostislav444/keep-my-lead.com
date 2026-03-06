@@ -1,8 +1,7 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
 
-urlpatterns = [
-    path('', views.IntegrationListCreateView.as_view(), name='integration-list'),
-    path('/<int:pk>', views.IntegrationDetailView.as_view(), name='integration-detail'),
-    path('/<int:pk>/sync', views.IntegrationSyncView.as_view(), name='integration-sync'),
-]
+router = DefaultRouter()
+router.register('', views.IntegrationViewSet, basename='integration')
+
+urlpatterns = router.urls

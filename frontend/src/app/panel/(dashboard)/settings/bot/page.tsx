@@ -1,8 +1,7 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { api } from "@/lib/api";
+import { useBotConfig, useUpdateBotConfig } from "@/lib/hooks";
 import type { BotConfig } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,22 +10,14 @@ import { Select } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function BotSettingsPage() {
-  const qc = useQueryClient();
-  const { data: config, isLoading } = useQuery({
-    queryKey: ["botConfig"],
-    queryFn: () => api.get<BotConfig>("/settings/bot"),
-  });
-
+  const { data: config, isLoading } = useBotConfig();
   const [form, setForm] = useState<Partial<BotConfig>>({});
 
   useEffect(() => {
     if (config) setForm(config);
   }, [config]);
 
-  const save = useMutation({
-    mutationFn: (data: Partial<BotConfig>) => api.put("/settings/bot", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["botConfig"] }),
-  });
+  const save = useUpdateBotConfig();
 
   const set = (key: keyof BotConfig) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -35,7 +26,7 @@ export default function BotSettingsPage() {
   if (isLoading) return <p className="text-zinc-400">Loading...</p>;
 
   return (
-    <div>
+    <div className="p-6">
       <h1 className="mb-6 text-2xl font-bold text-zinc-900">Bot Settings</h1>
       <Card>
         <CardHeader>

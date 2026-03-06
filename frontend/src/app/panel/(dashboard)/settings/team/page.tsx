@@ -1,9 +1,14 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { api } from "@/lib/api";
-import { useUser } from "@/lib/hooks";
+import {
+  useUser,
+  useTeam,
+  useAddTeamMember,
+  useRemoveTeamMember,
+  useTelegramLink,
+  useDisconnectTelegram,
+} from "@/lib/hooks";
 import type { User } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,29 +17,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, Plus, X, Send, Unlink } from "lucide-react";
 
 export default function TeamPage() {
-  const qc = useQueryClient();
   const { data: me } = useUser();
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ username: "", email: "", password: "" });
 
-  const { data: members, isLoading } = useQuery({
-    queryKey: ["team"],
-    queryFn: () => api.get<User[]>("/auth/team"),
-  });
-
-  const addMember = useMutation({
-    mutationFn: (data: typeof form) => api.post("/auth/team", data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["team"] });
-      setAdding(false);
-      setForm({ username: "", email: "", password: "" });
-    },
-  });
-
-  const removeMember = useMutation({
-    mutationFn: (id: number) => api.delete(`/auth/team/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["team"] }),
-  });
+  const { data: members, isLoading } = useTeam();
+  const addMember = useAddTeamMember();
+  const removeMember = useRemoveTeamMember();
 
   const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -42,7 +31,7 @@ export default function TeamPage() {
   const memberList = Array.isArray(members) ? members : (members as any)?.results ?? [];
 
   return (
-    <div>
+    <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-zinc-900">Team</h1>
         <Button onClick={() => setAdding(true)}>
@@ -68,7 +57,7 @@ export default function TeamPage() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                addMember.mutate(form);
+                addMember.mutate(form, { onSuccess: () => { setAdding(false); setForm({ username: "", email: "", password: "" }); } });
               }}
               className="space-y-3"
             >
@@ -123,21 +112,9 @@ export default function TeamPage() {
 }
 
 function TelegramConnect() {
-  const qc = useQueryClient();
   const { data: me } = useUser();
-
-  const { data: tgData } = useQuery({
-    queryKey: ["telegram-link"],
-    queryFn: () => api.get<{ link: string; bot_username: string; connected: boolean }>("/auth/telegram/link"),
-  });
-
-  const disconnect = useMutation({
-    mutationFn: () => api.delete("/auth/telegram/link"),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["me"] });
-      qc.invalidateQueries({ queryKey: ["telegram-link"] });
-    },
-  });
+  const { data: tgData } = useTelegramLink();
+  const disconnect = useDisconnectTelegram();
 
   const connected = me?.telegram_chat_id || tgData?.connected;
 

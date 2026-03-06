@@ -1,66 +1,45 @@
-from rest_framework import generics, status
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import Dialog, Message
-from .serializers import DialogListSerializer, DialogDetailSerializer
+
+from apps.core.mixins import TenantQuerySetMixin
+from .filters import DialogFilter
+from .models import Dialog
+from .serializers import DialogListSerializer, DialogDetailSerializer, MessageSerializer
+from .services import handoff_dialog, return_dialog_to_bot, send_manager_message
 
 
-class DialogListView(generics.ListAPIView):
-    serializer_class = DialogListSerializer
-
-    def get_queryset(self):
-        qs = Dialog.objects.filter(
-            tenant=self.request.user.tenant
-        ).prefetch_related('messages')
-        s = self.request.query_params.get('status')
-        if s:
-            qs = qs.filter(status=s)
-        source = self.request.query_params.get('source')
-        if source:
-            qs = qs.filter(source=source)
-        return qs.order_by('-updated_at')
-
-
-class DialogDetailView(generics.RetrieveAPIView):
-    serializer_class = DialogDetailSerializer
+class DialogViewSet(TenantQuerySetMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = Dialog.objects.all()
+    filterset_class = DialogFilter
 
     def get_queryset(self):
-        return Dialog.objects.filter(
-            tenant=self.request.user.tenant
-        ).prefetch_related('messages')
+        return super().get_queryset().prefetch_related('messages').order_by('-updated_at')
 
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return DialogDetailSerializer
+        return DialogListSerializer
 
-class DialogHandoffView(APIView):
-    def post(self, request, pk):
-        dialog = Dialog.objects.get(pk=pk, tenant=request.user.tenant)
-        dialog.is_bot_active = False
-        dialog.status = Dialog.Status.HANDED_OFF
-        dialog.save()
+    @action(detail=True, methods=['post'])
+    def handoff(self, request, pk=None):
+        handoff_dialog(self.get_object())
         return Response({'status': 'handed_off'})
 
-
-class DialogReturnToBotView(APIView):
-    def post(self, request, pk):
-        dialog = Dialog.objects.get(pk=pk, tenant=request.user.tenant)
-        dialog.is_bot_active = True
-        dialog.status = Dialog.Status.ACTIVE
-        dialog.save()
+    @action(detail=True, methods=['post'], url_path='return-to-bot')
+    def return_to_bot(self, request, pk=None):
+        return_dialog_to_bot(self.get_object())
         return Response({'status': 'returned_to_bot'})
 
-
-class DialogSendMessageView(APIView):
-    def post(self, request, pk):
-        dialog = Dialog.objects.get(pk=pk, tenant=request.user.tenant)
+    @action(detail=True, methods=['post'])
+    def send(self, request, pk=None):
         text = request.data.get('text', '').strip()
         if not text:
             return Response(
                 {'error': 'text is required'}, status=status.HTTP_400_BAD_REQUEST
             )
-        message = Message.objects.create(
-            dialog=dialog, role=Message.Role.MANAGER, text=text
+        message = send_manager_message(self.get_object(), text)
+        return Response(
+            MessageSerializer(message).data,
+            status=status.HTTP_201_CREATED,
         )
-        # TODO: send message via Meta API
-        return Response({
-            'id': message.id, 'role': message.role,
-            'text': message.text, 'created_at': message.created_at,
-        }, status=status.HTTP_201_CREATED)

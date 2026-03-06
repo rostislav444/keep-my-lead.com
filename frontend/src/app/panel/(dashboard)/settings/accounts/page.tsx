@@ -1,29 +1,29 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
-import type { PaginatedResponse, InstagramAccount } from "@/lib/types";
+import { useAccounts, useDisconnectAccount } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Instagram, Trash2, Plus, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function AccountsPage() {
-  const qc = useQueryClient();
+  return (
+    <Suspense fallback={<p className="text-zinc-400">Loading...</p>}>
+      <AccountsContent />
+    </Suspense>
+  );
+}
+
+function AccountsContent() {
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
   const error = searchParams.get("error");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["accounts"],
-    queryFn: () => api.get<PaginatedResponse<InstagramAccount>>("/settings/accounts"),
-  });
-
-  const disconnect = useMutation({
-    mutationFn: (id: number) => api.delete(`/settings/accounts/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["accounts"] }),
-  });
+  const { data, isLoading } = useAccounts();
+  const disconnect = useDisconnectAccount();
 
   const handleConnect = async () => {
     try {
@@ -35,7 +35,7 @@ export default function AccountsPage() {
   };
 
   return (
-    <div>
+    <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-zinc-900">Instagram Accounts</h1>
         <Button onClick={handleConnect}>

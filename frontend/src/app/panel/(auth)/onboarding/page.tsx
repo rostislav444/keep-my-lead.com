@@ -1,19 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { api, setTokens } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-zinc-50"><p className="text-zinc-500">Loading...</p></div>}>
+      <OnboardingContent />
+    </Suspense>
+  );
+}
+
+function OnboardingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const qc = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [igToken, setIgToken] = useState("");
   const [form, setForm] = useState({
     company_name: "",
     email: "",
@@ -22,8 +32,17 @@ export default function OnboardingPage() {
   });
 
   useEffect(() => {
+    const token = searchParams.get("token");
+    if (!token) {
+      router.replace("/panel/login");
+      return;
+    }
+    setIgToken(token);
+
     api
-      .get<{ ig_username: string; ig_name: string }>("/auth/onboarding")
+      .get<{ ig_username: string; ig_name: string; token: string }>(
+        `/auth/onboarding?token=${encodeURIComponent(token)}`
+      )
       .then((data) => {
         setForm((f) => ({
           ...f,
@@ -34,7 +53,7 @@ export default function OnboardingPage() {
       .catch(() => {
         router.replace("/panel/login");
       });
-  }, [router]);
+  }, [searchParams, router]);
 
   const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -44,7 +63,11 @@ export default function OnboardingPage() {
     setError("");
     setSubmitting(true);
     try {
-      await api.post("/auth/onboarding", form);
+      const data = await api.post<{ access: string; refresh: string }>("/auth/onboarding", {
+        ...form,
+        token: igToken,
+      });
+      setTokens(data.access, data.refresh);
       qc.invalidateQueries({ queryKey: ["me"] });
       router.push("/panel/dashboard");
     } catch (err: unknown) {

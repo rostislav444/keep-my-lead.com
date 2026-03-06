@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /Users/rostislavnikolaiev/Desktop/work/leadbot/frontend/src/app/panel/'\\(dashboard\\)')",
+      "Bash(python -c \":*)",
+      "Bash(python -m py_compile apps/accounts/views.py)",
+      "Bash(python -m py_compile apps/tenants/views.py)",
+      "Bash(python -m py_compile apps/dialogs/views.py)",
+      "Bash(python -m py_compile apps/leads/views.py)",
+      "Bash(python -m py_compile apps/catalog/views.py)",
+      "Bash(python -m py_compile apps/bot/views.py)",
+      "Bash(python -m py_compile apps/mappers/views.py)",
+      "Bash(python -m py_compile apps/webhooks/views.py)",
+      "Bash(for f in apps/*/urls.py leadbot/urls.py)",
+      "Bash(do echo \"=== $f ===\")",
+      "Read(//Users/rostislavnikolaiev/Desktop/work/leadbot/backend/**)",
+      "Bash(wc -l /Users/rostislavnikolaiev/Desktop/work/leadbot/backend/apps/*/views.py)",
+      "Bash(ls -la /Users/rostislavnikolaiev/Desktop/work/leadbot/backend/apps/tenants/views*)",
+      "Bash(python -m py_compile apps/tenants/views/__init__.py)",
+      "Bash(python -m py_compile apps/tenants/views/views_auth.py)",
+      "Bash(python -m py_compile apps/tenants/views/views_team.py)",
+      "Bash(python -m py_compile apps/tenants/views/views_telegram.py)",
+      "Bash(python -m py_compile apps/tenants/views/views_instagram.py)",
+      "Bash(python -m py_compile apps/accounts/views/__init__.py)",
+      "Bash(python -m py_compile apps/accounts/views/views_instagram.py)",
+      "Bash(python -m py_compile apps/webhooks/services.py)",
+      "Bash(python -m py_compile apps/tenants/services.py)",
+      "Bash(python -m py_compile apps/dialogs/services.py)",
+      "Bash(python -m py_compile apps/accounts/services.py)",
+      "Bash(wc -l apps/*/views.py apps/*/views/*.py apps/*/services.py)",
+      "Bash(for f in apps/*/urls.py)",
+      "Bash(grep -rn \"trailing_slash=False\" /Users/rostislavnikolaiev/Desktop/work/leadbot/backend/apps/*/urls.py /Users/rostislavnikolaiev/Desktop/work/leadbot/backend/apps/tenants/urls.py)",
+      "Bash(python -m py_compile apps/core/services/__init__.py)",
+      "Bash(python -m py_compile apps/core/services/tokens.py)",
+      "Bash(python -m py_compile apps/core/services/auth.py)",
+      "Bash(python -m py_compile apps/tenants/services/__init__.py)",
+      "Bash(python -m py_compile apps/tenants/services/telegram.py)",
+      "Bash(python -m py_compile apps/tenants/services/instagram.py)",
+      "Bash(python -m py_compile apps/accounts/services/__init__.py)",
+      "Bash(python -m py_compile apps/accounts/services/instagram.py)",
+      "Bash(python -m py_compile apps/accounts/services/meta.py)",
+      "Bash(python -m py_compile apps/accounts/services/connect.py)",
+      "Bash(python -m py_compile leadbot/settings.py)",
+      "Bash(python -m py_compile apps/core/middleware.py)",
+      "Bash(docker compose exec backend python manage.py seed_demo --reset)",
+      "Bash(git add backend/ frontend/ deploy.sh .claude/)"
+    ],
+    "additionalDirectories": [
+      "/Users/rostislavnikolaiev/Desktop/work/leadbot/backend/apps/*"
+    ]
+  }
+}

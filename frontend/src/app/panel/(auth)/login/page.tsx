@@ -4,28 +4,30 @@ import { useState } from "react";
 import { useLogin } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [showManagerLogin, setShowManagerLogin] = useState(false);
   const login = useLogin();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-zinc-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#F5F4ED] via-white to-[#ECECDC] p-4">
       <div className="w-full max-w-sm">
         {/* Logo + Brand */}
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-900">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-[#351E1C]">
             <svg width="36" height="36" viewBox="0 0 16 16" fill="white">
               <path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" opacity="0.8" />
               <rect x="6" y="6" width="4" height="4" fill="white" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+          <h1 className="text-3xl font-bold tracking-tight text-[#351E1C]">
             Keep My Lead
           </h1>
-          <p className="mt-2 text-center text-base text-zinc-500 leading-relaxed">
+          <p className="mt-2 text-center text-base text-[#9E8E8C] leading-relaxed">
             Automate your Instagram DMs.
             <br />
             Never lose a lead again.
@@ -33,10 +35,10 @@ export default function LoginPage() {
         </div>
 
         {/* Main Card */}
-        <div className="rounded-2xl border border-zinc-200 bg-white px-7 py-7 shadow-sm">
+        <div className="rounded-lg border border-zinc-200 bg-white px-7 py-7 shadow-sm">
           {/* Instagram CTA */}
           <a
-            href="/api/auth/instagram"
+            href="/api/auth/instagram/"
             className="flex w-full items-center justify-center gap-3 overflow-hidden rounded-xl px-5 py-4 text-base font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
             style={{ background: "linear-gradient(135deg, #833AB4, #C13584, #E1306C, #F77737)" }}
           >
@@ -85,18 +87,29 @@ export default function LoginPage() {
                   className="space-y-3"
                 >
                   <Input
-                    placeholder="Username"
+                    placeholder="Email or username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
                   />
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                   {login.isError && (
                     <p className="text-sm text-red-600">Invalid credentials</p>
                   )}

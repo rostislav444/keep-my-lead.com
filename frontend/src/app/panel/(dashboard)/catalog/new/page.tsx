@@ -1,10 +1,8 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
-import type { Category, PaginatedResponse } from "@/lib/types";
+import { useCategories, useCreateItem } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,34 +13,17 @@ import Link from "next/link";
 
 export default function NewItemPage() {
   const router = useRouter();
-  const qc = useQueryClient();
   const [name, setName] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [context, setContext] = useState("");
   const [botInstructions, setBotInstructions] = useState("");
   const [categoryId, setCategoryId] = useState("");
 
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => api.get<PaginatedResponse<Category>>("/catalog/categories"),
-  });
-
-  const create = useMutation({
-    mutationFn: (data: {
-      name: string;
-      short_description: string;
-      context: string;
-      bot_instructions: string;
-      category: number | null;
-    }) => api.post<{ id: number }>("/catalog/items", data),
-    onSuccess: (item) => {
-      qc.invalidateQueries({ queryKey: ["items"] });
-      router.push(`/panel/catalog/${item.id}`);
-    },
-  });
+  const { data: categories } = useCategories();
+  const create = useCreateItem();
 
   return (
-    <div>
+    <div className="p-6">
       <div className="mb-6 flex items-center gap-3">
         <Link href="/panel/catalog">
           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -63,7 +44,7 @@ export default function NewItemPage() {
                 context,
                 bot_instructions: botInstructions,
                 category: categoryId ? Number(categoryId) : null,
-              });
+              }, { onSuccess: (item) => router.push(`/panel/catalog/${item.id}`) });
             }}
             className="space-y-4"
           >

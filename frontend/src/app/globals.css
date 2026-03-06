@@ -9,6 +9,14 @@
   --color-primary-hover: #4f46e5;
   --color-primary-light: #eef2ff;
   --color-primary-soft: rgba(99, 102, 241, 0.1);
+  /* Brand palette from landing */
+  --color-brand: #351E1C;
+  --color-brand-light: #3F2523;
+  --color-accent: #FF6037;
+  --color-accent-soft: rgba(255, 96, 55, 0.1);
+  --color-aqua: #A0C9CB;
+  --color-aqua-soft: rgba(160, 201, 203, 0.15);
+  --color-cream: #F5F4ED;
 }
 
 body {

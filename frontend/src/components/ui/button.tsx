@@ -3,19 +3,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { forwardRef, type ButtonHTMLAttributes } from "react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+  "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
   {
     variants: {
       variant: {
         default:
-          "bg-indigo-500 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md active:scale-[0.98]",
+          "bg-[#FF6037] text-white shadow-sm hover:bg-[#e04e28] hover:shadow-md active:scale-[0.98]",
         destructive:
           "bg-red-500 text-white shadow-sm hover:bg-red-600 hover:shadow-md active:scale-[0.98]",
         outline:
           "border border-zinc-200 bg-white/80 backdrop-blur-sm hover:bg-zinc-50 hover:border-zinc-300 active:scale-[0.98]",
         ghost: "hover:bg-zinc-100/80 active:scale-[0.98]",
-        link: "text-indigo-600 underline-offset-4 hover:underline",
-        soft: "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 active:scale-[0.98]",
+        link: "text-[#FF6037] underline-offset-4 hover:underline",
+        soft: "bg-[#FF6037]/10 text-[#FF6037] hover:bg-[#FF6037]/15 active:scale-[0.98]",
       },
       size: {
         default: "h-10 px-4 py-2",

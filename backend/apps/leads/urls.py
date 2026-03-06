@@ -1,7 +1,7 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
 
-urlpatterns = [
-    path('', views.LeadListView.as_view(), name='lead-list'),
-    path('/export/csv', views.LeadExportCSVView.as_view(), name='lead-export-csv'),
-]
+router = DefaultRouter()
+router.register('', views.LeadViewSet, basename='lead')
+
+urlpatterns = router.urls

@@ -1,31 +1,20 @@
-from rest_framework import generics, status
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
+
+from apps.core.mixins import TenantQuerySetMixin
 from .models import TenantCRMConfig
 from .serializers import TenantCRMConfigSerializer
 from . import engine
 
 
-class IntegrationListCreateView(generics.ListCreateAPIView):
+class IntegrationViewSet(TenantQuerySetMixin, viewsets.ModelViewSet):
     serializer_class = TenantCRMConfigSerializer
+    queryset = TenantCRMConfig.objects.all()
 
-    def get_queryset(self):
-        return TenantCRMConfig.objects.filter(tenant=self.request.user.tenant)
-
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user.tenant)
-
-
-class IntegrationDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = TenantCRMConfigSerializer
-
-    def get_queryset(self):
-        return TenantCRMConfig.objects.filter(tenant=self.request.user.tenant)
-
-
-class IntegrationSyncView(APIView):
-    def post(self, request, pk):
-        config = TenantCRMConfig.objects.get(pk=pk, tenant=request.user.tenant)
+    @action(detail=True, methods=['post'])
+    def sync(self, request, pk=None):
+        config = self.get_object()
         try:
             engine.sync(config)
             return Response({'status': 'sync complete'})

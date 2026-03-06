@@ -1,26 +1,26 @@
 import csv
+
 from django.http import HttpResponse
-from rest_framework import generics
+from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
+
+from apps.core.mixins import TenantQuerySetMixin
+from .filters import LeadFilter
 from .models import Lead
 from .serializers import LeadSerializer
 
 
-class LeadListView(generics.ListAPIView):
+class LeadViewSet(TenantQuerySetMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = LeadSerializer
+    queryset = Lead.objects.all()
+    filterset_class = LeadFilter
 
     def get_queryset(self):
-        qs = Lead.objects.filter(
-            tenant=self.request.user.tenant
-        ).select_related('product', 'dialog')
-        temp = self.request.query_params.get('temperature')
-        if temp:
-            qs = qs.filter(temperature=temp)
-        return qs.order_by('-created_at')
+        return super().get_queryset().select_related('product', 'dialog').order_by('-created_at')
 
-
-class LeadExportCSVView(generics.GenericAPIView):
-    def get(self, request):
-        leads = Lead.objects.filter(tenant=request.user.tenant).select_related('product')
+    @action(detail=False, methods=['get'], url_path='export/csv')
+    def export_csv(self, request):
+        leads = self.get_queryset()
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="leads.csv"'
         writer = csv.writer(response)
