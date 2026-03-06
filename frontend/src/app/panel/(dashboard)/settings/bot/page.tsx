@@ -26,8 +26,11 @@ export default function BotSettingsPage() {
   if (isLoading) return <p className="text-zinc-400">Loading...</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="mb-6 text-2xl font-bold text-zinc-900">Bot Settings</h1>
+    <div className="flex flex-col h-full">
+      <div className="flex h-14 items-center px-6 border-b border-zinc-200 bg-white shrink-0">
+        <h1 className="text-lg font-semibold text-[#351E1C]">Bot Settings</h1>
+      </div>
+      <div className="flex-1 overflow-y-auto p-6">
       <Card>
         <CardHeader>
           <CardTitle>Configure your sales bot</CardTitle>
@@ -107,6 +110,7 @@ export default function BotSettingsPage() {
           </form>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

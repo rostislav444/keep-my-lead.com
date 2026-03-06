@@ -25,10 +25,6 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#351E1C]">Dashboard</h1>
-      </div>
-
       {/* Stats */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard

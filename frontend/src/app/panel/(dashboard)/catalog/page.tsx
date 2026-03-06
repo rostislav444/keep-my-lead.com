@@ -38,20 +38,22 @@ export default function CatalogPage() {
   const grouped = groupByCategory(items?.results ?? [], categories?.results ?? []);
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#351E1C]">Catalog</h1>
+    <div className="flex flex-col h-full">
+      <div className="flex h-14 items-center justify-between border-b border-zinc-200 bg-white px-6 shrink-0">
+        <h1 className="text-lg font-semibold text-[#351E1C]">Catalog</h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowCategories((v) => !v)}>
+          <Button variant="outline" size="sm" onClick={() => setShowCategories((v) => !v)}>
             <FolderOpen className="mr-1.5 h-4 w-4" />
             Categories
           </Button>
-          <Button onClick={() => router.push("/panel/catalog/new")}>
+          <Button size="sm" onClick={() => router.push("/panel/catalog/new")}>
             <Plus className="mr-1.5 h-4 w-4" />
             Add product
           </Button>
         </div>
       </div>
+
+      <div className="flex-1 overflow-y-auto p-6">
 
       {showCategories && (
         <CategoriesManager categories={categories?.results ?? []} />
@@ -139,6 +141,7 @@ export default function CatalogPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

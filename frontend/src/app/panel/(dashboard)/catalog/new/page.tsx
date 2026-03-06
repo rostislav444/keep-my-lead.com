@@ -23,16 +23,16 @@ export default function NewItemPage() {
   const create = useCreateItem();
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center gap-3">
+    <div className="flex flex-col h-full">
+      <div className="flex h-14 items-center gap-3 px-6 border-b border-zinc-200 bg-white shrink-0">
         <Link href="/panel/catalog">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-zinc-900">New product</h1>
+        <h1 className="text-lg font-semibold text-[#351E1C]">New product</h1>
       </div>
-
+      <div className="flex-1 overflow-y-auto p-6">
       <Card>
         <CardContent>
           <form
@@ -110,6 +110,7 @@ export default function NewItemPage() {
           </form>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

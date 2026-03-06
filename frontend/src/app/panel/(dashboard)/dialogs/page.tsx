@@ -89,8 +89,10 @@ export default function DialogsPage() {
 
   return (
     <div className="flex h-screen flex-col bg-white">
-      {/* Top: Status filter bar */}
-      <div className="flex items-center gap-1 border-b border-zinc-200 bg-white px-4 py-2 shrink-0">
+      {/* Top: Header + Status filter bar */}
+      <div className="flex h-14 items-center gap-4 border-b border-zinc-200 bg-white px-6 shrink-0">
+        <h1 className="text-lg font-semibold text-[#351E1C] shrink-0">Dialogs</h1>
+        <div className="flex items-center gap-1">
         {STATUS_TABS.map((tab) => {
           const count = tab.value === ""
             ? allDialogsData?.count ?? 0
@@ -118,6 +120,7 @@ export default function DialogsPage() {
             </button>
           );
         })}
+        </div>
       </div>
 
       {/* Main content */}

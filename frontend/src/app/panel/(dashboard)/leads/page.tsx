@@ -67,16 +67,11 @@ export default function LeadsPage() {
   }, [data]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3rem)]">
+    <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-3 shrink-0">
+      <div className="flex h-14 items-center justify-between border-b border-zinc-200 bg-white px-6 shrink-0">
         <div className="flex items-center gap-6">
-          <div>
-            <h1 className="text-lg font-bold text-[#351E1C]">Leads</h1>
-            <p className="text-xs text-[#9E8E8C]">
-              {data?.count ?? 0} total leads
-            </p>
-          </div>
+          <h1 className="text-lg font-semibold text-[#351E1C]">Leads</h1>
           {/* Filter tabs */}
           <div className="flex items-center gap-1 rounded-lg bg-zinc-100 p-1">
             {FILTERS.map((f) => (

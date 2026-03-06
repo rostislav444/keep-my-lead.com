@@ -35,14 +35,15 @@ function AccountsContent() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-zinc-900">Instagram Accounts</h1>
-        <Button onClick={handleConnect}>
+    <div className="flex flex-col h-full">
+      <div className="flex h-14 items-center justify-between px-6 border-b border-zinc-200 bg-white shrink-0">
+        <h1 className="text-lg font-semibold text-[#351E1C]">Instagram Accounts</h1>
+        <Button size="sm" onClick={handleConnect}>
           <Plus className="mr-1 h-4 w-4" />
           Connect account
         </Button>
       </div>
+      <div className="flex-1 overflow-y-auto p-6">
 
       {success && (
         <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
@@ -102,6 +103,7 @@ function AccountsContent() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

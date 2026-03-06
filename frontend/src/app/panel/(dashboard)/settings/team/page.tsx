@@ -31,14 +31,15 @@ export default function TeamPage() {
   const memberList = Array.isArray(members) ? members : (members as any)?.results ?? [];
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-zinc-900">Team</h1>
-        <Button onClick={() => setAdding(true)}>
+    <div className="flex flex-col h-full">
+      <div className="flex h-14 items-center justify-between px-6 border-b border-zinc-200 bg-white shrink-0">
+        <h1 className="text-lg font-semibold text-[#351E1C]">Team</h1>
+        <Button size="sm" onClick={() => setAdding(true)}>
           <Plus className="mr-1 h-4 w-4" />
           Add manager
         </Button>
       </div>
+      <div className="flex-1 overflow-y-auto p-6">
 
       {/* Your own Telegram connection */}
       {me && (
@@ -107,6 +108,7 @@ export default function TeamPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
